@@ -1,0 +1,15 @@
+# Core framework
+crewai[bedrock]==1.15.4
+crewai-tools>=1.14.4
+python-dotenv
+
+# Resume generation
+PyPDF2
+PyMuPDF
+reportlab
+
+# LLM Providers — instale apenas o do provedor que for usar
+langchain-openai           # OpenAI GPT-4o
+langchain-anthropic        # Anthropic Claude
+langchain-google-genai     # Google Gemini
+langchain-xai              # Grok (xAI)

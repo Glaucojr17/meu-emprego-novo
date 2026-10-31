@@ -1,0 +1,80 @@
+{
+  "basics": {
+    "name": "Dev Procurando",
+    "label": "Senior Full-Stack Engineer",
+    "email": "dev.procurando@example.com",
+    "phone": "+1 555 0101",
+    "url": "https://example.com/devprocurando",
+    "summary": "Full-stack engineer with 8 years of experience building web products with React, Node.js, Supabase and Vercel, from database schema to production deploy.",
+    "location": { "city": "Remote", "countryCode": "US", "region": "" },
+    "profiles": [
+      { "network": "LinkedIn", "username": "devprocurando", "url": "https://www.linkedin.com/in/devprocurando/" },
+      { "network": "GitHub", "username": "devprocurando", "url": "https://github.com/devprocurando" }
+    ]
+  },
+  "work": [
+    {
+      "name": "Launchpad Labs",
+      "position": "Senior Full-Stack Engineer",
+      "location": "Remote",
+      "startDate": "2022-02",
+      "endDate": "",
+      "highlights": [
+        "Led the migration of a legacy admin panel to Next.js on Vercel, cutting page load time by 45%.",
+        "Moved authentication and data from self-hosted Postgres to Supabase, enforcing access with Row Level Security.",
+        "Built a realtime collaboration feature on Supabase Realtime used by 12k weekly users.",
+        "Mentored 3 developers and introduced preview deployments for every pull request."
+      ]
+    },
+    {
+      "name": "Brightcart",
+      "position": "Full-Stack Developer",
+      "location": "Remote",
+      "startDate": "2019-05",
+      "endDate": "2022-01",
+      "highlights": [
+        "Built the checkout flow in React and a Node.js/Express API, increasing conversion by 18%.",
+        "Designed PostgreSQL schemas and background jobs for order processing.",
+        "Set up CI with automated tests, reducing release time from 2 days to 2 hours."
+      ]
+    },
+    {
+      "name": "Pixelforge Studio",
+      "position": "Front-End Developer",
+      "location": "Remote",
+      "startDate": "2017-03",
+      "endDate": "2019-04",
+      "highlights": [
+        "Delivered 20+ client websites and web apps using React and Node.js.",
+        "Created a reusable component library shared across 5 projects."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "State University",
+      "area": "Computer Science",
+      "studyType": "Bachelor",
+      "location": "US",
+      "startDate": "2012-08",
+      "endDate": "2016-05",
+      "gpa": "",
+      "courses": []
+    }
+  ],
+  "skills": [
+    { "name": "Front-End", "keywords": ["React", "Next.js", "TypeScript", "Tailwind CSS"] },
+    { "name": "Back-End", "keywords": ["Node.js", "Express", "REST APIs", "PostgreSQL"] },
+    { "name": "Supabase", "keywords": ["Auth", "Row Level Security", "Realtime", "Storage", "Edge Functions"] },
+    { "name": "Cloud & DevOps", "keywords": ["Vercel", "GitHub Actions", "Preview Deployments"] },
+    { "name": "Testing", "keywords": ["Jest", "Playwright", "Testing Library"] }
+  ],
+  "certificates": [],
+  "projects": [
+    { "name": "Open Source Dashboard Kit", "description": "Starter kit with Next.js, Supabase Auth and RLS policies, deployable to Vercel in one click." }
+  ],
+  "languages": [
+    { "language": "English", "fluency": "Fluent" }
+  ],
+  "interests": []
+}

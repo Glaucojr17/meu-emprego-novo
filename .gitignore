@@ -1,3 +1,26 @@
+# Python / env
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Local tooling
+.claude/
+.DS_Store
+tmp/
+backup/
+trained_agents_data.pkl
+
+# PRIVACY: your real data never goes to git.
+# Only the fictional example in examples/ is versioned.
+input/*
+data/*
+outputs/*
+!input/.gitkeep
+!data/.gitkeep
+!outputs/.gitkeep
+
+# --- GitHub template ---
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
