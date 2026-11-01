@@ -23,6 +23,7 @@ Os agentes *Estrategista de Carreira*, *Gerente de Contratação*, *Editor de Cu
 - **Multi-pessoa:** dados isolados por pessoa (`input/`, `data/`, `outputs/`).
 - **Saída bilíngue:** `--lang pt-BR` (padrão) ou `--lang en`.
 - **Cobertura completa da carreira:** todas as posições são mantidas, da mais recente à mais antiga; sem limite fixo de bullets ou páginas.
+- **Pipeline completo de busca de emprego:** da triagem de vagas à preparação de entrevista e ao rastreamento, em [meu-emprego-novo-pipeline](#pipeline-de-busca-de-emprego-meu-emprego-novo-pipeline).
 
 ## ⚠️ Privacidade em primeiro lugar
 
@@ -106,6 +107,63 @@ Crie um perfil restrito no AWS CLI e adapte [infra/aws/bedrock-policy.json](infr
 (troque `123456789012` pelo ID da sua conta). As tentativas extras e o único fallback para o Sonnet valem
 apenas para throttling/indisponibilidade; erros de permissão e validação são propagados.
 Testes offline: `python -m unittest discover -s tests -v`.
+
+## Pipeline de busca de emprego (`meu-emprego-novo-pipeline/`)
+
+O gerador de currículos é só uma etapa de um processo maior. A pasta [meu-emprego-novo-pipeline](meu-emprego-novo-pipeline/README.md)
+traz o passo a passo reproduzível de como a busca foi organizada com ajuda de IA, e terminou em contratação:
+perfil-mestre, vagas triadas, currículo sob medida, revisão de cobertura, preparação para entrevista e acompanhamento das candidaturas.
+
+```
+perfil-mestre → busca → triagem → currículo sob medida → revisão de cobertura
+                                                      → preparação de entrevista
+                                                      → rastreamento → aprendizado
+```
+
+> **Ensina o método, não expõe a vida de ninguém.** Todos os exemplos usam uma persona fictícia (Ana Souza).
+> Não serve para fabricar experiência, burlar triagem ou se candidatar em massa sem ler as vagas.
+
+| # | Etapa | Saída | Documento |
+|---|-------|-------|-----------|
+| 0 | Princípios | regras de jogo | [00-principios](meu-emprego-novo-pipeline/docs/00-principios.md) |
+| 1 | Perfil-mestre | `profile_truth.md` | [01-profile-truth](meu-emprego-novo-pipeline/docs/01-profile-truth.md) |
+| 2 | Busca de vagas | lista numerada de vagas | [02-busca-de-vagas](meu-emprego-novo-pipeline/docs/02-busca-de-vagas.md) |
+| 3 | Triagem | vagas por aderência | [03-triagem](meu-emprego-novo-pipeline/docs/03-triagem.md) |
+| 4 | Currículo sob medida | `resume.json` → `.tex` → PDF | [04-curriculo-sob-medida](meu-emprego-novo-pipeline/docs/04-curriculo-sob-medida.md) |
+| 5 | Revisão de cobertura | `coverage_review.md` | [05-coverage-review](meu-emprego-novo-pipeline/docs/05-coverage-review.md) |
+| 6 | Preparação de entrevista | `interview_prep.md` | [06-interview-prep](meu-emprego-novo-pipeline/docs/06-interview-prep.md) |
+| 7 | Rastreamento | `tracker.csv` | [07-rastreamento](meu-emprego-novo-pipeline/docs/07-rastreamento.md) |
+| 8 | Golpes e segurança | checklist | [08-golpes-e-seguranca](meu-emprego-novo-pipeline/docs/08-golpes-e-seguranca.md) |
+| 9 | LinkedIn | plano de otimização | [09-linkedin](meu-emprego-novo-pipeline/docs/09-linkedin.md) |
+| 10 | Resultados e lições | retrospectiva | [10-resultados-e-licoes](meu-emprego-novo-pipeline/docs/10-resultados-e-licoes.md) |
+
+Teste o pipeline com a persona de exemplo (Python 3.9+, só biblioteca padrão):
+
+```bash
+cd meu-emprego-novo-pipeline
+python3 scripts/validar_json.py exemplo/resume.json
+python3 scripts/json_para_latex.py exemplo/resume.json exemplo/curriculo.tex
+bash scripts/checar_privacidade.sh   # rode antes de cada commit
+```
+
+### Regras de ouro
+
+1. **Uma única fonte de verdade.** Todo currículo deriva do `profile_truth.md`; fato que não está lá não vai para o currículo.
+2. **Nunca invente métricas.** A revisão de cobertura existe para pegar números divergentes.
+3. **A IA propõe, você decide.** Leia tudo o que for enviado em seu nome.
+4. **Lacuna declarada vale mais que maquiagem.**
+5. **Exclusões são regra, não sugestão.**
+6. **Segredos ficam fora do chat.** Senhas, documentos e dados bancários não entram em prompts.
+7. **Versione o método, não os dados.** O que é seu fica em `privado/`, nunca versionada.
+
+### Segurança: golpes de recrutamento
+
+- Entrevista que pede para baixar e rodar código (inclusive um repositório "para achar um bug"): recuse.
+- Formulário que pede documento de identidade na candidatura: deixe em branco; documento só na contratação, por canal oficial.
+- Pedido de pagamento, taxa ou "kit": golpe.
+- Domínio de e-mail diferente do da empresa, urgência exagerada, proposta boa demais: confirme pelo site oficial.
+
+Versão completa, instalação detalhada, FAQ e prompts de cada etapa em [meu-emprego-novo-pipeline/README.md](meu-emprego-novo-pipeline/README.md).
 
 ## Contribuindo e licença
 

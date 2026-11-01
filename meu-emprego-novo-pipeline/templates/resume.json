@@ -1,0 +1,46 @@
+{
+  "basics": {
+    "name": "Seu Nome",
+    "label": "Cargo-alvo | Especialidade",
+    "email": "seu.email@exemplo.com",
+    "phone": "",
+    "url": "",
+    "summary": "Resumo de 3 a 4 linhas, baseado apenas no profile_truth.md.",
+    "location": { "city": "Cidade", "region": "UF", "countryCode": "BR" },
+    "profiles": [
+      { "network": "LinkedIn", "username": "", "url": "https://www.linkedin.com/in/seu-perfil/" }
+    ]
+  },
+  "work": [
+    {
+      "name": "Empresa",
+      "position": "Cargo",
+      "location": "Cidade, País",
+      "startDate": "AAAA-MM",
+      "endDate": "AAAA-MM",
+      "highlights": [
+        "Destaque verdadeiro e verificável.",
+        "Outro destaque."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Instituição",
+      "studyType": "Bacharelado",
+      "area": "Curso",
+      "startDate": "",
+      "endDate": "AAAA"
+    }
+  ],
+  "skills": [
+    { "name": "Categoria", "keywords": ["Tecnologia 1", "Tecnologia 2"] }
+  ],
+  "certificates": [
+    { "name": "Nome da certificação", "issuer": "Emissor", "date": "AAAA" }
+  ],
+  "languages": [
+    { "language": "Português", "fluency": "Nativo" }
+  ],
+  "projects": []
+}

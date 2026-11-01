@@ -1,0 +1,21 @@
+# Área privada: tudo que é pessoal fica aqui e nunca sobe
+privado/
+
+# Currículos e documentos reais (fora de exemplo/)
+*.pdf
+!exemplo/*.pdf
+*.docx
+*.xlsx
+
+# Artefatos de compilação LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# Ambiente
+.env
+.DS_Store
+__pycache__/
+*.pyc
