@@ -26,7 +26,7 @@ Cada candidatura enviada e cada resposta recebida.
 1. Copie `templates/tracker.csv` para `privado/tracker.csv`.
 2. Registre **logo após** cada envio. Se deixar para depois, esquece.
 3. Ao receber resposta, atualize `status`, `proximo_passo` e `observacoes`.
-4. Peça ao assistente um resumo semanal: quantas enviadas, quantas respostas, quais fontes e versões de currículo funcionaram.
+4. Ao fim de cada prazo que você definiu (veja o [capítulo 10](10-resultados-e-licoes.md)), peça ao assistente um resumo: quantas enviadas, quantas respostas, quais fontes e versões de currículo funcionaram.
 
 ## Registre também
 - **Entrevistas marcadas**: data, hora, link, nome do contato (apenas no arquivo privado).

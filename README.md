@@ -10,7 +10,7 @@
 
 Aqui você encontra duas coisas:
 
-- **O método:** um passo a passo para organizar a busca, da construção do perfil até a retrospectiva. Funciona com qualquer assistente de IA.
+- **O método:** um passo a passo para organizar a busca, da construção do perfil às retrospectivas que você repete para refinar o processo. Funciona com qualquer assistente de IA.
 - **A ferramenta:** uma CLI com agentes de IA que automatiza a parte mais trabalhosa do método, o currículo sob medida para cada vaga.
 
 ![antes/depois](images/before_after.png)
@@ -42,14 +42,14 @@ CANDIDATAR   currículo sob medida → revisão de cobertura         para cada v
              → preparação de entrevista → envio e registro
     │
     ▼
-APRENDER     o que gerou resposta? ajuste perfil e prompts       toda semana, e volta para ENCONTRAR
+APRENDER     o que gerou resposta? ajuste perfil e prompts       a cada prazo seu, e volta para ENCONTRAR
 ```
 
 Três ideias sustentam tudo:
 
 1. **Uma única fonte de verdade.** Você escreve uma vez a versão longa e honesta da sua carreira, o `profile_truth.md`. Todo currículo e toda resposta de entrevista saem dele.
 2. **A IA propõe, você decide.** Ela pode reordenar, resumir e traduzir. Não pode inventar. Nada sai com o seu nome sem você ler.
-3. **Registrar para aprender.** Uma planilha simples mostra quais currículos e fontes de vagas geram resposta.
+3. **Registrar para aprender.** Uma planilha simples mostra quais currículos e fontes de vagas geram resposta. Ao fim de cada prazo que você mesmo define, uma retrospectiva transforma esses dados em ajustes no seu processo.
 
 ## 2. Escolha a sua trilha
 
@@ -106,7 +106,7 @@ O tutorial completo está em **[meu-emprego-novo-pipeline/README.md](meu-emprego
 | 7 | Candidatura e rastreamento | `tracker.csv` | [07](meu-emprego-novo-pipeline/docs/07-rastreamento.md) | |
 | 8 | Golpes e segurança | Checklist | [08](meu-emprego-novo-pipeline/docs/08-golpes-e-seguranca.md) | |
 | 9 | LinkedIn | Plano de otimização | [09](meu-emprego-novo-pipeline/docs/09-linkedin.md) | |
-| 10 | Resultados e lições | Retrospectiva | [10](meu-emprego-novo-pipeline/docs/10-resultados-e-licoes.md) | |
+| 10 | Resultados e lições | Retrospectiva a cada ciclo | [10](meu-emprego-novo-pipeline/docs/10-resultados-e-licoes.md) | |
 
 ## 5. Trilha B: automatizar o currículo com a CLI
 

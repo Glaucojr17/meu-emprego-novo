@@ -54,7 +54,7 @@ Cada etapa recebe a saída da anterior. A preparação é feita uma vez; as dema
 | | 7 | [Candidatura e rastreamento](docs/07-rastreamento.md) | Por candidatura | Candidaturas e respostas | `tracker.csv` |
 | **Apoio** | 8 | [Golpes e segurança](docs/08-golpes-e-seguranca.md) | Antes da primeira candidatura | Situações suspeitas | Checklist |
 | | 9 | [LinkedIn](docs/09-linkedin.md) | Logo após a etapa 1 | Perfil-mestre | Plano de otimização |
-| **Aprender** | 10 | [Resultados e lições](docs/10-resultados-e-licoes.md) | Toda semana e no fim | Tudo acima | Ajustes e retrospectiva |
+| **Aprender** | 10 | [Resultados e lições](docs/10-resultados-e-licoes.md) | A cada prazo que você definir | Tudo acima | Retrospectiva e ajustes |
 
 Os números são os mesmos dos capítulos em `docs/`. Este README mostra o caminho; cada capítulo aprofunda a etapa, com erros comuns e exemplos.
 
@@ -307,18 +307,19 @@ Você não precisa de um currículo do zero para cada vaga. O ideal são **4 a 6
 
 #### Etapa 10: Revise e ajuste
 
-**Por que existe:** o processo melhora com dados. Sem revisão, você só repete o que já fazia.
+**Por que existe:** esta etapa não é o fim do método. É a ferramenta para refinar o seu próprio processo, usada repetidamente: sem ela, você só repete o que já fazia.
 
-**Entrada:** o tracker. **Saída:** ajustes no perfil-mestre e nos prompts.
+**Entrada:** o tracker e a retrospectiva anterior. **Saída:** uma retrospectiva datada e ajustes no perfil-mestre e nos prompts.
 
-1. A cada semana, peça ao assistente um resumo do tracker.
-2. Responda: quais versões de currículo geram resposta? Quais fontes de vagas rendem? Onde você desistiu, e por quê?
-3. Ajuste o perfil-mestre, os prompts e `vagas_excluidas.md`.
-4. Ao terminar a busca, faça a [retrospectiva](docs/10-resultados-e-licoes.md#retrospectiva-sugerida-para-você).
+1. Defina um prazo para o seu ciclo. Quem escolhe o intervalo é você, conforme a sua rotina.
+2. Ao fim do prazo, peça ao assistente um resumo do tracker.
+3. Faça a [retrospectiva](docs/10-resultados-e-licoes.md#retrospectiva-repita-a-cada-ciclo) e compare com a anterior: quais versões de currículo geram resposta? Quais fontes de vagas rendem? Onde você desistiu, e por quê?
+4. Ajuste o perfil-mestre, os prompts e `vagas_excluidas.md`.
+5. Defina o próximo prazo e volte para a [Etapa 2](#etapa-2-busque-vagas).
 
-**Pronto quando:** cada revisão semanal gerar pelo menos uma decisão: manter, ajustar ou parar de fazer algo.
+**Pronto quando:** a retrospectiva gerar pelo menos uma decisão (manter, ajustar ou parar de fazer algo) e o próximo prazo estiver definido.
 
-**Veja:** o [capítulo 10](docs/10-resultados-e-licoes.md) traz o que funcionou, o que não funcionou e o que fazer depois da contratação.
+**Veja:** o [capítulo 10](docs/10-resultados-e-licoes.md) explica como usar os ciclos e traz o que funcionou, o que não funcionou e o que fazer depois da contratação.
 
 ## 7. Depois da primeira rodada
 
