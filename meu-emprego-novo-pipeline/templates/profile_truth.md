@@ -8,6 +8,13 @@
 - Senioridade e áreas:
 - Direção de carreira (o que busco):
 
+## Contato (só o que pode aparecer no currículo)
+- E-mail profissional:
+- Telefone:
+- Cidade e UF:
+- LinkedIn:
+- Site ou portfólio:
+
 ## Experiência (mais recente primeiro)
 
 ### Empresa — Cargo (AAAA-MM a AAAA-MM)
@@ -36,7 +43,7 @@
 - ...
 
 ## Regras de comunicação
-- Nunca incluir: documentos de identidade, dados bancários, informações confidenciais de empregadores.
+- Nunca incluir: documentos de identidade, dados bancários, dados pessoais fora da seção Contato, informações confidenciais de empregadores.
 - Nunca afirmar: ...
 
 ## Adendos (detalhes lembrados depois)

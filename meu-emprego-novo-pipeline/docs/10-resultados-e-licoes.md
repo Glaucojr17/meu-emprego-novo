@@ -9,7 +9,7 @@ Refinar o seu próprio processo com base no que aconteceu nele, em vez de repeti
 
 1. **Defina o seu prazo.** Escolha o intervalo que faz sentido para a sua rotina e para o ritmo das suas candidaturas. Quem define é você; não existe prazo certo.
 2. **Trabalhe até o fim do prazo**, mantendo o tracker atualizado.
-3. **Faça a [retrospectiva](#retrospectiva-repita-a-cada-ciclo)** e guarde as respostas com a data, em `privado/`.
+3. **Faça a [retrospectiva](#retrospectiva-repita-a-cada-ciclo)** com o [prompt do tracker](../prompts/07-resumo-tracker.md) e o [prompt de retrospectiva](../prompts/10-retrospectiva.md), e guarde o resultado com a data em `privado/retrospectivas/`.
 4. **Compare com a retrospectiva anterior.** O que melhorou? O que continua igual?
 5. **Transforme as respostas em mudanças** no perfil-mestre, nos prompts, na lista de exclusões ou na sua rotina.
 6. **Defina o próximo prazo** e volte para a [etapa 2](02-busca-de-vagas.md).
@@ -55,6 +55,8 @@ Ao fim de cada prazo, responda e guarde:
 4. Qual pergunta de entrevista você preparou melhor? E pior?
 5. Que regra nova você criaria?
 6. O que vai fazer diferente no próximo ciclo?
+
+Veja a [retrospectiva da Ana](../exemplo/retrospectivas/2026-09-21.md) e [como ela mudou o ciclo seguinte](../exemplo/README.md#o-segundo-ciclo).
 
 ## O que fazer depois de contratado
 

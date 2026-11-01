@@ -43,3 +43,6 @@ Peça ao assistente que cite, para cada vaga, **o trecho do perfil que sustenta 
 
 ## Prompt
 [`prompts/03-triagem.md`](../prompts/03-triagem.md)
+
+## Exemplo
+[Triagem da Ana](../exemplo/vagas/2026-09-07-triagem.md).

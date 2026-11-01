@@ -3,7 +3,7 @@ privado/
 
 # Currículos e documentos reais (fora de exemplo/)
 *.pdf
-!exemplo/*.pdf
+!exemplo/**/*.pdf
 *.docx
 *.xlsx
 

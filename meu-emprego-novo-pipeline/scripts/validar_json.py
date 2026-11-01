@@ -60,8 +60,12 @@ def main():
     try:
         with open(sys.argv[1], encoding="utf-8") as f:
             dados = json.load(f)
-    except (OSError, json.JSONDecodeError) as exc:
-        print(f"ERRO ao ler JSON: {exc}")
+    except OSError as exc:
+        print(f"ERRO ao ler o arquivo: {exc}")
+        return 1
+    except json.JSONDecodeError as exc:
+        print(f"ERRO: o arquivo não é um JSON válido ({exc}).")
+        print("Salve só o JSON da resposta do assistente: do primeiro { ao último }, sem ``` e sem comentários.")
         return 1
 
     erros, avisos = validar(dados)

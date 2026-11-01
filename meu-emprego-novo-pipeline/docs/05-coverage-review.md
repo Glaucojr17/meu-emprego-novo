@@ -11,7 +11,7 @@ Auditar o currículo gerado contra **duas** coisas:
 `vaga.md`, `resume.json`, `profile_truth.md`.
 
 ## Saída
-`coverage_review.md` com seis blocos:
+`coverage_review.md`, na pasta da vaga. Faça uma revisão para **cada vaga**, mesmo reaproveitando uma versão do currículo. Ela tem seis blocos:
 
 1. **Fontes usadas**: quais arquivos foram considerados.
 2. **Preservado**: empregadores, cargos, datas e quantidade de destaques mantidos.
@@ -30,14 +30,15 @@ Em versões iniciais do meu processo, currículos e materiais de entrevista cheg
 2. Leia primeiro as seções de lacunas e de inconsistências. Corrija no currículo o que não bater com o perfil-mestre.
 3. Para cada lacuna obrigatória, decida:
    - **candidatar-se mesmo assim** (e se preparar para falar sobre isso);
-   - **ajustar o currículo** (se for um fato verdadeiro que ficou de fora; atualize o perfil-mestre);
+   - **ajustar o currículo** (se for um fato verdadeiro que ficou de fora; atualize o perfil-mestre e crie uma nova versão com o [prompt de ajuste](../prompts/04b-ajustar-curriculo.md));
    - **desistir da vaga**.
-4. Guarde o arquivo junto do currículo. Ele vira insumo para a preparação da entrevista.
+4. Guarde o arquivo na pasta da vaga. Ele vira insumo para a preparação da entrevista.
 
 ## Erros comuns
 - Tratar a revisão como carimbo de aprovação. Ela é um relatório de risco.
 - Aceitar "cobertura forte" sem conferir a evidência.
 - Esconder lacuna obrigatória. A entrevista técnica vai descobrir.
 
-## Exemplo
-[`exemplo/coverage_review.md`](../exemplo/coverage_review.md)
+## Exemplos
+- [Vaga com lacunas obrigatórias](../exemplo/curriculos/dados/vagas/2026-09-10-empresa-delta/coverage_review.md).
+- [Vaga que pediu um ajuste pontual](../exemplo/curriculos/dados/vagas/2026-09-23-empresa-teta/coverage_review.md).

@@ -17,7 +17,7 @@ Cada candidatura enviada e cada resposta recebida.
 | fonte | LinkedIn |
 | tipo | simplificada / externa |
 | link | https://... |
-| curriculo | dev-backend-v2 |
+| curriculo | dados-v2 (família e versão enviada) |
 | status | enviada / triagem / entrevista / teste / oferta / recusada / descartada |
 | proximo_passo | entrevista RH em 20/09 |
 | observacoes | cliente final: confirmar |
@@ -26,7 +26,7 @@ Cada candidatura enviada e cada resposta recebida.
 1. Copie `templates/tracker.csv` para `privado/tracker.csv`.
 2. Registre **logo após** cada envio. Se deixar para depois, esquece.
 3. Ao receber resposta, atualize `status`, `proximo_passo` e `observacoes`.
-4. Ao fim de cada prazo que você definiu (veja o [capítulo 10](10-resultados-e-licoes.md)), peça ao assistente um resumo: quantas enviadas, quantas respostas, quais fontes e versões de currículo funcionaram.
+4. Ao fim de cada prazo que você definiu (veja o [capítulo 10](10-resultados-e-licoes.md)), gere um resumo com o [prompt do tracker](../prompts/07-resumo-tracker.md): quantas enviadas, quantas respostas, quais fontes e versões de currículo funcionaram.
 
 ## Registre também
 - **Entrevistas marcadas**: data, hora, link, nome do contato (apenas no arquivo privado).
@@ -46,3 +46,6 @@ Cada candidatura enviada e cada resposta recebida.
 
 ## Privacidade
 Nomes de recrutadores, e-mails e telefones **ficam só no arquivo privado**. Nunca publique.
+
+## Exemplo
+[Tracker da Ana](../exemplo/tracker.csv).

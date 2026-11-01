@@ -2,7 +2,7 @@
 
 Este é o tutorial do [Agente da Meia Idade](../README.md). Ele ensina a reproduzir, com ajuda de IA, o processo que usei para organizar a minha busca de emprego: perfil-mestre, vagas triadas, currículo sob medida, revisão de cobertura, preparação para entrevista e acompanhamento das candidaturas. O processo terminou em contratação.
 
-> **Este material ensina o método, não expõe a minha vida.** Todos os exemplos usam uma persona fictícia, Ana Souza. Nenhum currículo, contato, recrutador ou empresa real aparece aqui.
+> **Este material ensina o método, não expõe a minha vida.** Todos os exemplos usam uma persona fictícia, Ana Souza. Nenhum currículo, contato, recrutador ou empresa real aparece aqui. [Siga a busca completa da Ana](exemplo/README.md) enquanto lê o tutorial.
 
 ---
 
@@ -12,7 +12,7 @@ Este é o tutorial do [Agente da Meia Idade](../README.md). Ele ensina a reprodu
 2. [Visão geral](#2-visão-geral)
 3. [Vocabulário](#3-vocabulário)
 4. [Regras de ouro](#4-regras-de-ouro)
-5. [Prepare o ambiente](#5-prepare-o-ambiente)
+5. [Prepare o ambiente](#5-prepare-o-ambiente), com a [sua primeira sessão](#sua-primeira-sessão)
 6. [Passo a passo](#6-passo-a-passo)
 7. [Depois da primeira rodada](#7-depois-da-primeira-rodada)
 8. [Privacidade: o que nunca versionar](#8-privacidade-o-que-nunca-versionar)
@@ -35,7 +35,7 @@ Não serve para fabricar experiência, burlar triagem ou candidatar-se em massa 
 
 - um perfil-mestre, a fonte de verdade da sua carreira;
 - uma lista de exclusões, para nunca reavaliar o que já descartou;
-- uma pasta por família de vagas, com currículo, revisão de cobertura e preparação de entrevista;
+- uma pasta por família de vagas, com as versões do currículo e, para cada vaga, a revisão de cobertura e a preparação de entrevista;
 - um rastreador que mostra o que está funcionando.
 
 ## 2. Visão geral
@@ -48,8 +48,8 @@ Cada etapa recebe a saída da anterior. A preparação é feita uma vez; as dema
 | | 1 | [Perfil-mestre](docs/01-profile-truth.md) | Uma vez, com ajustes | Sua história real | `profile_truth.md` |
 | **Encontrar** | 2 | [Busca de vagas](docs/02-busca-de-vagas.md) | Em rodadas | Perfil + preferências | Lista numerada de vagas |
 | | 3 | [Triagem](docs/03-triagem.md) | A cada busca | Lista de vagas | Vagas classificadas por aderência |
-| **Candidatar** | 4 | [Currículo sob medida](docs/04-curriculo-sob-medida.md) | Por família de vagas | Perfil + vaga | `resume.json` → `.tex` → PDF |
-| | 5 | [Revisão de cobertura](docs/05-coverage-review.md) | Por currículo | Vaga + currículo + perfil | `coverage_review.md` |
+| **Candidatar** | 4 | [Currículo sob medida](docs/04-curriculo-sob-medida.md) | Uma versão por família; nova versão só se preciso | Perfil + vaga | `resume.json` → `.tex` → PDF |
+| | 5 | [Revisão de cobertura](docs/05-coverage-review.md) | Por vaga | Vaga + currículo + perfil | `coverage_review.md` |
 | | 6 | [Preparação de entrevista](docs/06-interview-prep.md) | Por vaga | Vaga + currículo + revisão | `interview_prep.md` |
 | | 7 | [Candidatura e rastreamento](docs/07-rastreamento.md) | Por candidatura | Candidaturas e respostas | `tracker.csv` |
 | **Apoio** | 8 | [Golpes e segurança](docs/08-golpes-e-seguranca.md) | Antes da primeira candidatura | Situações suspeitas | Checklist |
@@ -64,6 +64,7 @@ Os números são os mesmos dos capítulos em `docs/`. Este README mostra o camin
 |---|---|
 | **Perfil-mestre** | O `profile_truth.md`: a versão longa e verdadeira da sua carreira, de onde tudo deriva |
 | **Família de vagas** | Grupo de vagas parecidas, como "engenharia de dados" e "backend sênior" |
+| **Versão** | Um currículo salvo de uma família, como `dados-v1`. Depois de enviada, ela não muda |
 | **Aderência** | Quanto o seu perfil comprovado atende aos requisitos de uma vaga |
 | **Cobertura** | Quais requisitos da vaga o currículo comprova, e com qual evidência |
 | **Lacuna** | Requisito que você não comprova. Ela é registrada, nunca disfarçada |
@@ -116,7 +117,7 @@ cd meu-emprego-novo/meu-emprego-novo-pipeline
 **2. Crie a sua área privada.** Tudo que for seu fica em `privado/`, que está no `.gitignore` e nunca sobe para o GitHub:
 
 ```bash
-mkdir -p privado/perfil privado/vagas privado/curriculos privado/entrevistas
+mkdir -p privado/perfil privado/vagas privado/curriculos privado/retrospectivas
 cp templates/profile_truth.md privado/perfil/profile_truth.md
 cp templates/vagas_excluidas.md privado/vagas/vagas_excluidas.md
 cp templates/tracker.csv privado/tracker.csv
@@ -125,12 +126,24 @@ cp templates/tracker.csv privado/tracker.csv
 **3. Teste com a persona de exemplo:**
 
 ```bash
-python3 scripts/validar_json.py exemplo/resume.json
-python3 scripts/json_para_latex.py exemplo/resume.json exemplo/curriculo.tex
-pdflatex -output-directory exemplo exemplo/curriculo.tex
+python3 scripts/validar_json.py exemplo/curriculos/dados/v1/resume.json
+python3 scripts/json_para_latex.py exemplo/curriculos/dados/v1/resume.json exemplo/curriculos/dados/v1/curriculo.tex
+pdflatex -output-directory exemplo/curriculos/dados/v1 exemplo/curriculos/dados/v1/curriculo.tex
 ```
 
-**Pronto quando:** o primeiro comando mostrar `OK: resume.json válido`, o segundo mostrar `gerado:` e o terceiro criar `exemplo/curriculo.pdf`.
+**Pronto quando:** o primeiro comando mostrar `OK: resume.json válido`, o segundo mostrar `gerado:` e o terceiro atualizar `curriculo.pdf` na mesma pasta.
+
+### Sua primeira sessão
+
+Reserve cerca de 2 horas e não tente fazer tudo de uma vez. O objetivo inicial é um só: ter o perfil-mestre.
+
+1. Crie o projeto no assistente ([Etapa 0](#etapa-0-configure-o-assistente)).
+2. Copie o [prompt de entrevista](prompts/01-perfil-mestre.md) e deixe o assistente conduzir a [Etapa 1](#etapa-1-construa-o-perfil-mestre), um empregador por vez.
+3. Ao terminar, abra o [perfil da Ana](exemplo/perfil/profile_truth.md) e compare o nível de detalhe com o seu.
+
+Ainda falta algo? Tudo bem. O perfil cresce com o tempo, e a seção de adendos existe para isso.
+
+**Se estiver sobrecarregado:** faça só o essencial. Perfil-mestre (etapa 1), revisão de cobertura (etapa 5) e registro no tracker (etapa 7). São essas etapas que evitam enviar algo falso e repetir erros.
 
 ## 6. Passo a passo
 
@@ -156,14 +169,14 @@ Cada etapa abaixo segue o mesmo formato: por que ela existe, o que entra, o que 
 
 **Entrada:** currículos antigos, LinkedIn, certificados e memória. **Saída:** `privado/perfil/profile_truth.md`.
 
-1. Para cada empregador, preencha cargo e período e responda: *que problema eu resolvi? como? com quê? qual foi o resultado?*
-2. Marque a origem de cada número: `[medido]`, `[estimado]` ou `[sem número]`. Métrica que você não defende em uma entrevista não entra.
-3. Registre as lacunas: o que você **não** fez ou apenas estudou. Elas protegem você de respostas inventadas.
-4. Anexe o arquivo ao projeto e peça ao assistente que **faça perguntas** para encontrar detalhes esquecidos. Responda apenas o que for verdade.
+1. Preencha a seção de contato só com o que pode aparecer no currículo.
+2. Anexe o arquivo e seus currículos antigos ao projeto e use o [prompt de entrevista](prompts/01-perfil-mestre.md). O assistente pergunta, um empregador por vez: *que problema você resolveu? como? com quê? qual foi o resultado?* Responda apenas o que for verdade.
+3. Marque a origem de cada número: `[medido]`, `[estimado]` ou `[sem número]`. Métrica que você não defende em uma entrevista não entra.
+4. Registre as lacunas: o que você **não** fez ou apenas estudou. Elas protegem você de respostas inventadas.
 
-**Pronto quando:** todo empregador tiver período e resultados, todo número tiver origem e a seção de lacunas estiver preenchida.
+**Pronto quando:** o contato estiver preenchido, todo empregador tiver período e resultados, todo número tiver origem e a seção de lacunas estiver preenchida.
 
-**Veja:** [exemplo da Ana](exemplo/profile_truth.md) · [capítulo 1](docs/01-profile-truth.md)
+**Veja:** [exemplo da Ana](exemplo/perfil/profile_truth.md) · [capítulo 1](docs/01-profile-truth.md)
 
 > **Próximo passo recomendado:** com o perfil pronto, faça a [Etapa 9](#etapa-9-alinhe-o-linkedin), para que recrutadores encontrem a mesma história.
 
@@ -181,7 +194,9 @@ Cada etapa abaixo segue o mesmo formato: por que ela existe, o que entra, o que 
 
 **Pronto quando:** você tiver uma lista numerada, só com vagas recentes e com links abertos.
 
-**Por que numerar?** Depois você pode dizer apenas "avalie a 3 e a 7". Veja o [capítulo 2](docs/02-busca-de-vagas.md).
+**Por que numerar?** Depois você pode dizer apenas "avalie a 3 e a 7".
+
+**Veja:** [busca](exemplo/vagas/2026-09-07-busca.md) e [exclusões](exemplo/vagas/vagas_excluidas.md) da Ana · [capítulo 2](docs/02-busca-de-vagas.md)
 
 #### Etapa 3: Trie as vagas
 
@@ -195,7 +210,7 @@ Cada etapa abaixo segue o mesmo formato: por que ela existe, o que entra, o que 
 
 **Pronto quando:** cada vaga tiver uma decisão: candidatar, decidir depois ou descartar.
 
-**Veja:** [capítulo 3](docs/03-triagem.md), com critérios e sinais de alerta.
+**Veja:** [triagem da Ana](exemplo/vagas/2026-09-07-triagem.md) · [capítulo 3](docs/03-triagem.md), com critérios e sinais de alerta.
 
 ### Fase 3: Candidatar
 
@@ -207,27 +222,36 @@ Cada etapa abaixo segue o mesmo formato: por que ela existe, o que entra, o que 
 
 **Entrada:** perfil-mestre e descrição da vaga. **Saída:** `resume.json`, `curriculo.tex` e `curriculo.pdf`.
 
-Você não precisa de um currículo do zero para cada vaga. O ideal são **4 a 6 versões bem feitas, uma por família de vagas**, com ajustes pontuais. Nomeie as pastas pelo cargo, não pela empresa.
+Você não precisa de um currículo do zero para cada vaga. O ideal são **de 4 a 6 famílias no máximo**, cada uma com a sua pasta. Dentro dela, cada versão fica em `v1/`, `v2/`, e cada vaga em `vagas/`:
 
-1. Crie a pasta e salve a descrição da vaga em `vaga.md`:
+```
+privado/curriculos/dados/
+├── v1/                               # resume.json, curriculo.tex, curriculo.pdf
+└── vagas/
+    └── 2026-09-10-empresa-delta/     # vaga.md, coverage_review.md, interview_prep.md
+```
+
+Os passos abaixo criam a **primeira versão** de uma família. Para as vagas seguintes, veja [Quando chegar a próxima vaga](#quando-chegar-a-próxima-vaga).
+
+1. Crie as pastas e salve a descrição da vaga em `vaga.md`:
    ```bash
-   mkdir -p privado/curriculos/dev-backend
+   mkdir -p privado/curriculos/dados/v1 privado/curriculos/dados/vagas/2026-09-10-empresa-delta
    ```
-2. Anexe `templates/resume.json` ao projeto e use o [prompt de currículo](prompts/04-curriculo-sob-medida.md). Salve a resposta em `privado/curriculos/dev-backend/resume.json`.
+2. Anexe `templates/resume.json` ao projeto e use o [prompt de currículo](prompts/04-curriculo-sob-medida.md). Salve em `privado/curriculos/dados/v1/resume.json` **só o JSON**: do primeiro `{` ao último `}`, sem bloco de código e sem comentários.
 3. Valide:
    ```bash
-   python3 scripts/validar_json.py privado/curriculos/dev-backend/resume.json
+   python3 scripts/validar_json.py privado/curriculos/dados/v1/resume.json
    ```
 4. Gere o `.tex` e o PDF:
    ```bash
-   python3 scripts/json_para_latex.py privado/curriculos/dev-backend/resume.json privado/curriculos/dev-backend/curriculo.tex
-   pdflatex -output-directory privado/curriculos/dev-backend privado/curriculos/dev-backend/curriculo.tex
+   python3 scripts/json_para_latex.py privado/curriculos/dados/v1/resume.json privado/curriculos/dados/v1/curriculo.tex
+   pdflatex -output-directory privado/curriculos/dados/v1 privado/curriculos/dados/v1/curriculo.tex
    ```
 5. Abra o PDF e **leia inteiro**.
 
 **Pronto quando:** o validador mostrar `OK` e o [checklist de conferência](docs/04-curriculo-sob-medida.md#conferência-final-checklist) estiver completo.
 
-**Veja:** [`resume.json`](exemplo/resume.json) e [PDF](exemplo/curriculo.pdf) da Ana · [capítulo 4](docs/04-curriculo-sob-medida.md)
+**Veja:** [`resume.json`](exemplo/curriculos/dados/v1/resume.json) e [PDF](exemplo/curriculos/dados/v1/curriculo.pdf) da Ana · [capítulo 4](docs/04-curriculo-sob-medida.md)
 
 > **Quer automatizar esta etapa?** A [CLI com agentes](../README.md#5-trilha-b-automatizar-o-currículo-com-a-cli) gera o currículo, um rascunho da revisão e a preparação de entrevista com um comando.
 
@@ -235,21 +259,21 @@ Você não precisa de um currículo do zero para cada vaga. O ideal são **4 a 6
 
 **Por que existe:** se só puder adotar uma prática deste método, adote esta. Quando cada arquivo era gerado separadamente, o mesmo projeto chegou a aparecer com números diferentes. Esta etapa audita o currículo contra a vaga e contra o perfil-mestre.
 
-**Entrada:** vaga, `resume.json` e perfil-mestre. **Saída:** `coverage_review.md`, guardado junto do currículo.
+**Entrada:** vaga, `resume.json` e perfil-mestre. **Saída:** `coverage_review.md`, guardado na pasta da vaga.
 
-1. Use o [prompt de revisão](prompts/05-coverage-review.md).
+1. Use o [prompt de revisão](prompts/05-coverage-review.md). Faça isso **em toda vaga**, mesmo reaproveitando uma versão.
 2. Comece pelas **lacunas** e **inconsistências**. Corrija no currículo todo fato ou número que não bata com o perfil.
 3. Para cada lacuna em requisito obrigatório, decida: candidatar-se mesmo assim e preparar-se para falar dela, ajustar o currículo se for um fato verdadeiro que ficou de fora, ou desistir da vaga.
 
 **Pronto quando:** não houver inconsistência aberta e cada lacuna obrigatória tiver uma decisão sua.
 
-**No exemplo:** a revisão da Ana mostra duas lacunas obrigatórias, Airflow e nuvem em produção. O currículo não as esconde, e ela só se candidata se aceitar falar abertamente sobre a transição. Veja a [revisão completa](exemplo/coverage_review.md) e o [capítulo 5](docs/05-coverage-review.md).
+**No exemplo:** a revisão da Ana mostra duas lacunas obrigatórias, Airflow e nuvem em produção. O currículo não as esconde, e ela só se candidata se aceitar falar abertamente sobre a transição. Veja a [revisão completa](exemplo/curriculos/dados/vagas/2026-09-10-empresa-delta/coverage_review.md) e o [capítulo 5](docs/05-coverage-review.md).
 
 #### Etapa 6: Prepare a entrevista
 
 **Por que existe:** as perguntas são previsíveis, e você responde melhor quando já ensaiou com histórias verdadeiras suas. Se preferir, faça esta etapa só quando uma entrevista for marcada.
 
-**Entrada:** vaga, currículo, revisão de cobertura e perfil-mestre. **Saída:** `interview_prep.md`.
+**Entrada:** vaga, currículo, revisão de cobertura e perfil-mestre. **Saída:** `interview_prep.md`, guardado na pasta da vaga.
 
 1. Use o [prompt de entrevista](prompts/06-interview-prep.md).
 2. Verifique no perfil-mestre cada fato e número. Se aparecer um número que você não reconhece, apague.
@@ -259,7 +283,7 @@ Você não precisa de um currículo do zero para cada vaga. O ideal são **4 a 6
 
 **Pronto quando:** você conseguir contar suas histórias em voz alta, sem ler, e tiver resposta para cada lacuna.
 
-**Veja:** [exemplo da Ana](exemplo/interview_prep.md) · [capítulo 6](docs/06-interview-prep.md), com orientações sobre salário e testes técnicos.
+**Veja:** [exemplo da Ana](exemplo/curriculos/dados/vagas/2026-09-10-empresa-delta/interview_prep.md) · [capítulo 6](docs/06-interview-prep.md), com orientações sobre salário e testes técnicos.
 
 #### Etapa 7: Candidate-se e registre
 
@@ -269,12 +293,38 @@ Você não precisa de um currículo do zero para cada vaga. O ideal são **4 a 6
 
 1. Candidate-se **você mesmo**, lendo cada formulário.
 2. Nunca preencha número de documento de identidade em formulário de vaga.
-3. Registre **logo após** o envio: data, empresa, vaga, fonte, tipo, link, versão do currículo e status.
+3. Registre **logo após** o envio: data, empresa, vaga, fonte, tipo, link, versão do currículo (como `dados-v1`) e status.
 4. Quando alguém responder, atualize o status e o próximo passo.
 
 **Pronto quando:** toda candidatura enviada tiver uma linha no tracker com a versão do currículo.
 
 **Veja:** [tracker da Ana](exemplo/tracker.csv) · [capítulo 7](docs/07-rastreamento.md), com colunas e métricas.
+
+#### Quando chegar a próxima vaga
+
+**Esta é a situação mais comum da busca.** Com uma versão pronta, você não refaz a Etapa 4: parte do que já tem.
+
+1. Crie a pasta da vaga e salve nela o `vaga.md`:
+   ```bash
+   mkdir -p privado/curriculos/dados/vagas/2026-09-23-empresa-teta
+   ```
+2. Rode a [revisão de cobertura](prompts/05-coverage-review.md) com a versão mais recente da família.
+3. Decida pelo resultado:
+
+   | A revisão mostra | O que fazer |
+   |---|---|
+   | Cobertura boa | Envie a mesma versão |
+   | Fato verdadeiro fora de lugar ou faltando | Crie uma nova versão, como `v2/`, com o [prompt de ajuste](prompts/04b-ajustar-curriculo.md) e refaça a revisão. Se o fato não estiver no perfil, acrescente-o lá primeiro |
+   | Lacuna obrigatória | Decida como na Etapa 5. Não ajuste o currículo para disfarçá-la |
+   | Vaga de outro tipo | Crie uma nova família e volte à Etapa 4 |
+
+4. Siga para as etapas 6 e 7, registrando no tracker a versão enviada.
+
+Nunca altere uma versão já enviada: é por ela que você saberá o que prometeu. Toda mudança vira uma versão nova.
+
+**Pronto quando:** a pasta da vaga tiver `vaga.md` e `coverage_review.md`, e o tracker indicar a versão enviada.
+
+**Veja:** a [Ana fazendo isso no segundo ciclo](exemplo/README.md#o-segundo-ciclo) · [capítulo 4](docs/04-curriculo-sob-medida.md#quando-chegar-a-próxima-vaga)
 
 ### Etapas de apoio
 
@@ -295,13 +345,12 @@ Você não precisa de um currículo do zero para cada vaga. O ideal são **4 a 6
 
 **Entrada:** perfil-mestre e texto atual do LinkedIn. **Saída:** `privado/perfil/plano_linkedin.md`.
 
-1. Peça um diagnóstico de inconsistências entre o LinkedIn e o perfil-mestre.
-2. Peça 2 ou 3 variações de headline e de "Sobre".
-3. Edite com a sua voz e aplique **você mesmo** no site.
+1. Use o [prompt de LinkedIn](prompts/09-linkedin.md) para listar inconsistências e receber variações de título e de "Sobre".
+2. Edite com a sua voz e aplique **você mesmo** no site.
 
 **Pronto quando:** datas, cargos e tecnologias baterem com o perfil-mestre.
 
-**Veja:** [capítulo 9](docs/09-linkedin.md), com o que ajustar em cada seção.
+**Veja:** [plano da Ana](exemplo/perfil/plano_linkedin.md) · [capítulo 9](docs/09-linkedin.md), com o que ajustar em cada seção.
 
 ### Fase 4: Aprender
 
@@ -312,21 +361,21 @@ Você não precisa de um currículo do zero para cada vaga. O ideal são **4 a 6
 **Entrada:** o tracker e a retrospectiva anterior. **Saída:** uma retrospectiva datada e ajustes no perfil-mestre e nos prompts.
 
 1. Defina um prazo para o seu ciclo. Quem escolhe o intervalo é você, conforme a sua rotina.
-2. Ao fim do prazo, peça ao assistente um resumo do tracker.
-3. Faça a [retrospectiva](docs/10-resultados-e-licoes.md#retrospectiva-repita-a-cada-ciclo) e compare com a anterior: quais versões de currículo geram resposta? Quais fontes de vagas rendem? Onde você desistiu, e por quê?
+2. Ao fim do prazo, gere o resumo com o [prompt do tracker](prompts/07-resumo-tracker.md).
+3. Faça a retrospectiva com o [prompt de retrospectiva](prompts/10-retrospectiva.md), compare com a anterior e guarde em `privado/retrospectivas/`.
 4. Ajuste o perfil-mestre, os prompts e `vagas_excluidas.md`.
 5. Defina o próximo prazo e volte para a [Etapa 2](#etapa-2-busque-vagas).
 
 **Pronto quando:** a retrospectiva gerar pelo menos uma decisão (manter, ajustar ou parar de fazer algo) e o próximo prazo estiver definido.
 
-**Veja:** o [capítulo 10](docs/10-resultados-e-licoes.md) explica como usar os ciclos e traz o que funcionou, o que não funcionou e o que fazer depois da contratação.
+**Veja:** [retrospectiva da Ana](exemplo/retrospectivas/2026-09-21.md) · o [capítulo 10](docs/10-resultados-e-licoes.md) explica como usar os ciclos e traz o que funcionou, o que não funcionou e o que fazer depois da contratação.
 
 ## 7. Depois da primeira rodada
 
 A preparação não se repete. A partir daqui, o ciclo é:
 
 ```
-busca → triagem → currículo (reaproveite a versão da família) → revisão → entrevista → registro → ajustes
+busca → triagem → revisão da versão atual → ajuste, se preciso → entrevista → registro → retrospectiva
 ```
 
 Três hábitos mantêm o processo sustentável:
@@ -365,13 +414,15 @@ Se algo sensível já foi commitado, **não adianta apagar no commit seguinte**:
 
 **Preciso saber programar?** Não para o método. Os scripts são três comandos que você copia e cola. Só a [CLI com agentes](../README.md#5-trilha-b-automatizar-o-currículo-com-a-cli) exige familiaridade com terminal e API.
 
-**Quantas versões de currículo devo ter?** Uma por família de vagas, não uma por vaga. Ajuste só o necessário por candidatura.
+**Quantas versões de currículo devo ter?** Comece com uma por família de vagas e crie outra só quando a revisão de cobertura mostrar que vale a pena. Veja [Quando chegar a próxima vaga](#quando-chegar-a-próxima-vaga).
+
+**O validador mostrou "não é um JSON válido". E agora?** Quase sempre o arquivo tem texto além do JSON. Deixe só o conteúdo do primeiro `{` ao último `}`, sem bloco de código e sem comentários.
 
 **A IA vai deixar meu currículo com cara de robô?** Pode. Reescreva o resumo e os destaques com a sua voz.
 
 **Posso confiar nas vagas que o assistente encontra?** Confira link, empresa e data. Resultados de busca podem estar desatualizados ou ser golpes.
 
-**Posso pular etapas?** Na pressa, mantenha ao menos o perfil-mestre (etapa 1), a revisão de cobertura (etapa 5) e o registro (etapa 7). São elas que protegem você de enviar algo falso e de repetir erros.
+**Posso pular etapas?** Na pressa, mantenha ao menos as etapas 1, 5 e 7. Veja [Sua primeira sessão](#sua-primeira-sessão).
 
 ## 10. Estrutura da pasta
 
@@ -379,7 +430,7 @@ Se algo sensível já foi commitado, **não adianta apagar no commit seguinte**:
 meu-emprego-novo-pipeline/
 ├── README.md                    # este tutorial
 ├── docs/                        # capítulos de aprofundamento (00 a 10)
-├── prompts/                     # prompts das etapas 2 a 6, prontos para adaptar
+├── prompts/                     # um prompt por etapa, numerado como os capítulos
 ├── templates/                   # arquivos em branco para começar
 │   ├── profile_truth.md
 │   ├── resume.json
@@ -389,8 +440,13 @@ meu-emprego-novo-pipeline/
 │   ├── validar_json.py          # confere campos obrigatórios do resume.json
 │   ├── json_para_latex.py       # converte resume.json em .tex
 │   └── checar_privacidade.sh    # procura dados pessoais antes do commit
-├── exemplo/                     # fluxo completo da persona Ana Souza
+├── exemplo/                     # a busca completa da Ana Souza, com a mesma estrutura de privado/
 └── privado/                     # SUA área (criada por você, nunca versionada)
+    ├── perfil/                  # profile_truth.md e plano do LinkedIn
+    ├── vagas/                   # exclusões, buscas e triagens, por data
+    ├── curriculos/<família>/    # v1/, v2/ e vagas/<data-empresa>/
+    ├── retrospectivas/          # uma por ciclo
+    └── tracker.csv
 ```
 
 ---

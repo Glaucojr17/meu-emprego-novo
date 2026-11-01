@@ -1,7 +1,8 @@
 # Revisão de cobertura (EXEMPLO FICTÍCIO)
 
 **Alvo:** Engenheiro(a) de Dados Pleno, Empresa Delta.
-**Fontes:** `exemplo/profile_truth.md` (prioridade), `exemplo/resume.json`, `exemplo/vaga.md`.
+**Versão avaliada:** `dados-v1`.
+**Fontes:** `perfil/profile_truth.md` (prioridade), `curriculos/dados/v1/resume.json` e `vaga.md`.
 
 ## Preservado
 Dois empregadores, cargos e datas reais mantidos. Quatro destaques na empresa atual e dois na anterior, todos presentes no perfil-mestre. Nenhuma métrica nova.

@@ -13,12 +13,14 @@ Ter, em um só lugar, a versão **longa, completa e verdadeira** da sua carreira
 `privado/perfil/profile_truth.md`, com seções:
 
 1. **Identidade profissional**: como você se define, senioridade, áreas.
-2. **Experiência por empresa**: cargo, período, contexto, responsabilidades, tecnologias, resultados.
-3. **Formação e certificações**: com situação (concluída, em andamento, expirada).
-4. **Competências**: separe *domina*, *usa com frequência* e *estudou*.
-5. **Idiomas**: nível real.
-6. **Lacunas conhecidas**: o que você não fez.
-7. **Regras de comunicação**: o que nunca deve aparecer (dados pessoais, informações confidenciais de ex-empregadores).
+2. **Contato**: só o que pode aparecer no currículo. O assistente não usa dados de contato de outro lugar.
+3. **Experiência por empresa**: cargo, período, contexto, responsabilidades, tecnologias, resultados.
+4. **Formação e certificações**: com situação (concluída, em andamento, expirada).
+5. **Competências**: separe *domina*, *usa com frequência* e *estudou*.
+6. **Idiomas**: nível real.
+7. **Lacunas conhecidas**: o que você não fez.
+8. **Regras de comunicação**: o que nunca deve aparecer (dados pessoais, informações confidenciais de ex-empregadores).
+9. **Adendos**: detalhes lembrados depois.
 
 ## Passo a passo
 
@@ -31,7 +33,7 @@ Ter, em um só lugar, a versão **longa, completa e verdadeira** da sua carreira
    Só `[medido]` entra em currículo sem ressalvas.
 4. Escreva as lacunas sem rodeios.
 5. Anexe o arquivo ao projeto do assistente.
-6. Peça ao assistente que **faça perguntas** para encontrar detalhes esquecidos, e responda apenas o que for verdade.
+6. Use o [prompt de entrevista](../prompts/01-perfil-mestre.md) para o assistente **fazer perguntas** e encontrar detalhes esquecidos. Responda apenas o que for verdade.
 
 ## Erros comuns
 - **Copiar o currículo antigo como se fosse a verdade.** Currículos antigos já são versões resumidas e podem ter números sem lastro.
@@ -40,7 +42,7 @@ Ter, em um só lugar, a versão **longa, completa e verdadeira** da sua carreira
 - **Apagar as lacunas.** São elas que protegem você de respostas inventadas.
 
 ## Dica: complemento incremental
-Ao longo do processo você vai lembrar de detalhes novos. Mantenha um segundo arquivo (`complemento.md`) ou uma seção "Adendos" e, periodicamente, consolide no arquivo principal.
+Ao longo do processo você vai lembrar de detalhes novos. Registre-os com a data na seção "Adendos" e, periodicamente, consolide nas seções principais.
 
 ## Exemplo
-Veja [`exemplo/profile_truth.md`](../exemplo/profile_truth.md).
+Veja [`exemplo/perfil/profile_truth.md`](../exemplo/perfil/profile_truth.md).

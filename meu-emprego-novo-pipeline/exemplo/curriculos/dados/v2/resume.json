@@ -1,11 +1,11 @@
 {
   "basics": {
     "name": "Ana Souza",
-    "label": "Engenheira de Dados | Python, SQL, Pipelines",
+    "label": "Desenvolvedora Backend em transição para Engenharia de Dados | Python, SQL",
     "email": "ana.souza@exemplo.com",
     "phone": "",
     "url": "",
-    "summary": "Desenvolvedora backend com 7 anos de experiência em Python e SQL, construindo APIs e relatórios para fintech e varejo. Em transição para engenharia de dados, com especialização em andamento e foco em pipelines confiáveis, automação de entrega e qualidade de dados.",
+    "summary": "Desenvolvedora backend com 7 anos de experiência em Python e SQL, construindo relatórios e APIs para varejo e fintech. Em transição para engenharia de dados, com especialização em andamento e experiência em automação de entrega com CI/CD.",
     "location": { "city": "Belo Horizonte", "region": "MG", "countryCode": "BR" },
     "profiles": [
       { "network": "LinkedIn", "username": "ana-souza-exemplo", "url": "https://www.linkedin.com/in/ana-souza-exemplo/" }
@@ -20,8 +20,8 @@
       "endDate": "Present",
       "highlights": [
         "Desenvolvi e mantive APIs REST em Python (FastAPI) sobre PostgreSQL para uma plataforma de pagamentos B2B.",
-        "Reduzi o tempo médio de resposta de um endpoint crítico de 1,8 s para 0,6 s, medido em painel de APM.",
         "Automatizei o deploy de três serviços com pipelines de CI/CD em GitHub Actions e containers Docker.",
+        "Reduzi o tempo médio de resposta de um endpoint crítico de 1,8 s para 0,6 s, medido em painel de APM.",
         "Integrei sistemas de bancos e serviços internos por filas de mensagens."
       ]
     },
@@ -33,6 +33,7 @@
       "endDate": "2022-02",
       "highlights": [
         "Construí relatórios de vendas em SQL (MySQL) usados diariamente pela área comercial.",
+        "Mantive rotinas SQL agendadas para atualizar esses relatórios.",
         "Mantive APIs em Django para um e-commerce."
       ]
     }
@@ -54,7 +55,7 @@
     }
   ],
   "skills": [
-    { "name": "Linguagens e dados", "keywords": ["Python", "SQL", "PostgreSQL", "MySQL"] },
+    { "name": "Linguagens e dados", "keywords": ["SQL", "Python", "MySQL", "PostgreSQL"] },
     { "name": "Engenharia", "keywords": ["APIs REST", "FastAPI", "Django", "Docker", "GitHub Actions", "CI/CD"] },
     { "name": "Em estudo", "keywords": ["Airflow", "Spark"] }
   ],

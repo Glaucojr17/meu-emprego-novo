@@ -92,21 +92,21 @@ A CLI cobre apenas parte do método. O restante é igual nas duas trilhas:
 
 ## 4. Trilha A: método com o seu assistente de IA
 
-O tutorial completo está em **[meu-emprego-novo-pipeline/README.md](meu-emprego-novo-pipeline/README.md)**. Cada etapa tem objetivo, passos, critério de conclusão e um prompt pronto, e todos os exemplos usam a persona fictícia Ana Souza.
+O tutorial completo está em **[meu-emprego-novo-pipeline/README.md](meu-emprego-novo-pipeline/README.md)**. Ele começa pela sua primeira sessão de trabalho. Cada etapa tem objetivo, passos e critério de conclusão, e você acompanha a [busca completa da Ana Souza](meu-emprego-novo-pipeline/exemplo/README.md), uma persona fictícia.
 
 | # | Etapa | O que você produz | Capítulo | Prompt |
 |---|---|---|---|---|
 | 0 | Princípios | Instruções do assistente | [00](meu-emprego-novo-pipeline/docs/00-principios.md) | |
-| 1 | Perfil-mestre | `profile_truth.md` | [01](meu-emprego-novo-pipeline/docs/01-profile-truth.md) | |
+| 1 | Perfil-mestre | `profile_truth.md` | [01](meu-emprego-novo-pipeline/docs/01-profile-truth.md) | [prompt](meu-emprego-novo-pipeline/prompts/01-perfil-mestre.md) |
 | 2 | Busca de vagas | Lista numerada de vagas | [02](meu-emprego-novo-pipeline/docs/02-busca-de-vagas.md) | [prompt](meu-emprego-novo-pipeline/prompts/02-busca-vagas.md) |
 | 3 | Triagem | Vagas por aderência | [03](meu-emprego-novo-pipeline/docs/03-triagem.md) | [prompt](meu-emprego-novo-pipeline/prompts/03-triagem.md) |
-| 4 | Currículo sob medida | `resume.json` → `.tex` → PDF | [04](meu-emprego-novo-pipeline/docs/04-curriculo-sob-medida.md) | [prompt](meu-emprego-novo-pipeline/prompts/04-curriculo-sob-medida.md) |
+| 4 | Currículo sob medida | `resume.json` → `.tex` → PDF | [04](meu-emprego-novo-pipeline/docs/04-curriculo-sob-medida.md) | [criar](meu-emprego-novo-pipeline/prompts/04-curriculo-sob-medida.md) · [ajustar](meu-emprego-novo-pipeline/prompts/04b-ajustar-curriculo.md) |
 | 5 | Revisão de cobertura | `coverage_review.md` | [05](meu-emprego-novo-pipeline/docs/05-coverage-review.md) | [prompt](meu-emprego-novo-pipeline/prompts/05-coverage-review.md) |
 | 6 | Preparação de entrevista | `interview_prep.md` | [06](meu-emprego-novo-pipeline/docs/06-interview-prep.md) | [prompt](meu-emprego-novo-pipeline/prompts/06-interview-prep.md) |
-| 7 | Candidatura e rastreamento | `tracker.csv` | [07](meu-emprego-novo-pipeline/docs/07-rastreamento.md) | |
+| 7 | Candidatura e rastreamento | `tracker.csv` | [07](meu-emprego-novo-pipeline/docs/07-rastreamento.md) | [prompt](meu-emprego-novo-pipeline/prompts/07-resumo-tracker.md) |
 | 8 | Golpes e segurança | Checklist | [08](meu-emprego-novo-pipeline/docs/08-golpes-e-seguranca.md) | |
-| 9 | LinkedIn | Plano de otimização | [09](meu-emprego-novo-pipeline/docs/09-linkedin.md) | |
-| 10 | Resultados e lições | Retrospectiva a cada ciclo | [10](meu-emprego-novo-pipeline/docs/10-resultados-e-licoes.md) | |
+| 9 | LinkedIn | Plano de otimização | [09](meu-emprego-novo-pipeline/docs/09-linkedin.md) | [prompt](meu-emprego-novo-pipeline/prompts/09-linkedin.md) |
+| 10 | Resultados e lições | Retrospectiva a cada ciclo | [10](meu-emprego-novo-pipeline/docs/10-resultados-e-licoes.md) | [prompt](meu-emprego-novo-pipeline/prompts/10-retrospectiva.md) |
 
 ## 5. Trilha B: automatizar o currículo com a CLI
 

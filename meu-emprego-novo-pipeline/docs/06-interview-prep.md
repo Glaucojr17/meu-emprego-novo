@@ -7,7 +7,7 @@ Entrar na entrevista tendo ensaiado as perguntas prováveis com **histórias ver
 `vaga.md`, `resume.json`, `coverage_review.md`, `profile_truth.md`.
 
 ## Saída
-`interview_prep.md` com:
+`interview_prep.md`, na pasta da vaga, com:
 
 1. **Análise da vaga**: o que a empresa quer e os três critérios que decidem a entrevista.
 2. **Perguntas prováveis** (técnicas, comportamentais, situacionais, motivação) com:
@@ -48,4 +48,4 @@ Veja [docs/08-golpes-e-seguranca.md](08-golpes-e-seguranca.md): teste legítimo 
 - Não ter perguntas para fazer.
 
 ## Exemplo
-[`exemplo/interview_prep.md`](../exemplo/interview_prep.md)
+[Preparação da Ana para a vaga da Delta](../exemplo/curriculos/dados/vagas/2026-09-10-empresa-delta/interview_prep.md)

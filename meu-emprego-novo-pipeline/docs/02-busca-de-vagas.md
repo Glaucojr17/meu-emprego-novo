@@ -59,3 +59,6 @@ Mantenha um arquivo com empresas/tipos de vaga que não devem aparecer, e o moti
 
 ## Prompt
 [`prompts/02-busca-vagas.md`](../prompts/02-busca-vagas.md)
+
+## Exemplo
+[Busca](../exemplo/vagas/2026-09-07-busca.md) e [lista de exclusões](../exemplo/vagas/vagas_excluidas.md) da Ana.

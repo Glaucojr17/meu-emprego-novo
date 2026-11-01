@@ -1,4 +1,5 @@
 data,empresa,vaga,fonte,tipo,link,curriculo,status,proximo_passo,observacoes
 2026-09-10,Empresa Delta,Engenheiro(a) de Dados Pleno,LinkedIn,externa,https://exemplo.com/vaga/1,dados-v1,enviada,aguardar resposta,lacunas: Airflow e nuvem
-2026-09-11,Empresa Épsilon,Dev Backend Sênior,LinkedIn,simplificada,https://exemplo.com/vaga/2,backend-v2,triagem,entrevista RH em 20/09,
+2026-09-11,Empresa Épsilon,Dev Backend Sênior,LinkedIn,simplificada,https://exemplo.com/vaga/2,backend-v1,entrevista,entrevista RH em 2026-09-28,
 2026-09-12,Empresa Zeta,Analista de Dados,Indeed,simplificada,https://exemplo.com/vaga/3,dados-v1,descartada,,teste exigia baixar e executar código (golpe)
+2026-09-23,Empresa Teta,Engenheiro(a) de Dados Júnior/Pleno,LinkedIn,externa,https://exemplo.com/vaga/4,dados-v2,enviada,aguardar resposta,cobertura forte após reordenar destaques

@@ -22,11 +22,11 @@ Alinhar o perfil público ao perfil-mestre, para que recrutadores encontrem voc�
 | Atividade | postar ou comentar de forma consistente, sobre o que você realmente faz |
 
 ## Passo a passo
-1. Cole o texto atual do perfil e o perfil-mestre.
-2. Peça um diagnóstico de **inconsistências** (datas, cargos, tecnologias) entre os dois.
-3. Peça propostas de headline e "Sobre" em 2 ou 3 variações.
-4. Escolha, edite com sua voz e aplique **você mesmo** no site.
-5. Peça uma lista de palavras-chave por família de vaga e verifique se aparecem em Competências e Experiência.
+1. Use o [prompt de LinkedIn](../prompts/09-linkedin.md) com o texto atual do perfil e o perfil-mestre.
+2. Corrija as **inconsistências** apontadas (datas, cargos, tecnologias).
+3. Escolha uma das variações de título e de "Sobre".
+4. Edite com sua voz e aplique **você mesmo** no site.
+5. Verifique se as palavras-chave de cada família de vaga aparecem em Competências e Experiência.
 
 ## Cuidados
 - Mantenha a coerência com os currículos enviados; recrutadores comparam.
@@ -36,3 +36,6 @@ Alinhar o perfil público ao perfil-mestre, para que recrutadores encontrem voc�
 
 ## Conteúdo
 Se você produz conteúdo (artigos, posts), mantenha um calendário simples. Qualidade e consistência valem mais que volume.
+
+## Exemplo
+[Plano da Ana](../exemplo/perfil/plano_linkedin.md).
