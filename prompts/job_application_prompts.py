@@ -188,6 +188,12 @@ Please provide a comprehensive evaluation:
    or content structure for this specific role.
 
 Ensure your feedback is constructive, specific, and actionable.
+
+Rate only evidence that is written in this resume and supported by the candidate's sources.
+A requirement the candidate cannot truthfully cover stays a gap: list it, and do not raise the
+rating for claims without evidence.
+
+The LAST line of your answer MUST be exactly: FINAL_RATING: <number from 1 to 10, one decimal allowed>
 """
 
 
@@ -226,6 +232,7 @@ Steps:
 1. **Apply Hiring Manager Feedback**
    - Address every gap and suggestion from the hiring manager's evaluation.
    - Prioritize experiences and skills aligned with the feedback.
+   - A gap the sources cannot truthfully cover stays a gap. Never fabricate to raise the rating.
 
 2. **Edit and Refine**
    - Restructure to the following JSON schema: {JSON_STRUCTURE}
@@ -257,45 +264,37 @@ Report the save operation result in your final response.
 """
 
 
-def get_applicant_prompt(job_description: str, original_resume: dict = None, language: str = "pt-BR") -> str:
-    resume_section = f"\n### Original Resume (source of truth — NEVER fabricate beyond this)\n{original_resume}\n" if original_resume else ""
+def get_applicant_prompt(
+    job_description: str,
+    final_resume: dict,
+    refinement_summary: str,
+    final_feedback: str,
+    language: str = "pt-BR",
+) -> str:
     return f"""{_voice_block(language)}
 
 ---
 
-You are a professional job applicant optimizing your resume for the following role:
+You are a professional job applicant reporting on how your resume was optimized for this role:
 
 ### Target Role
 {job_description}
-{resume_section}
-Your goal is to iterate until the hiring manager rates your resume 8.5 or higher out of 10.
 
-Steps:
+### Final Resume
+{final_resume}
 
-1. **Get HR Evaluation**
-   - Ask the hiring manager for the current rating and detailed feedback.
+### Refinement History (measured, do not change these facts)
+{refinement_summary}
 
-2. **Evaluation Loop**
-   - If rating < 8.5:
-     a) Thank the hiring manager for feedback.
-     b) When delegating to the Resume Editor: ALWAYS pass the original resume above and the language constraint ({_voice_block(language)}) so the editor never generates from scratch.
-     c) Return to step 1 with the updated resume.
-   - If rating ≥ 8.5:
-     a) Confirm the final rating.
-     b) Proceed to finalization.
+### Hiring Manager's Evaluation of the Final Resume
+{final_feedback}
 
-3. **Finalization**
-   - Confirm the optimized resume is saved.
-   - Summarize the key improvements made across iterations.
+Write a short report with:
+1. The final rating and whether the target was reached, exactly as in the history above.
+2. The key improvements made to the resume.
+3. The gaps that remain open, and what to verify before applying.
 
-4. **Documentation**
-   - Record feedback received and changes made in each iteration.
-   - Note the final rating and any additional insights from the hiring manager.
-
-Output:
-1. Final resume rating (must be ≥ 8.5)
-2. Summary of key improvements made
-3. Additional recommendations from the hiring manager
+Never claim a rating that is not in the history. Missing the target is a valid result: report it plainly.
 """
 
 

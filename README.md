@@ -2,61 +2,188 @@
 
 ![logo](images/logo.jpeg)
 
-Uma equipe de agentes de IA que reposiciona o seu currículo para cada vaga.
+**O método que usei para me recolocar no mercado de trabalho com ajuda de IA, aberto para você reproduzir.**
 
-> **Feita por um dev, para devs.** Não é um SaaS polido: é uma ferramenta que um desenvolvedor
-> escreveu para resolver o próprio problema. Por isso é uma CLI, é hackeável, e cada prompt, agente
-> e template é código simples que você pode ler e alterar. Foi criada por um profissional de TI com
-> 30+ anos de carreira para voltar ao mercado, e funcionou: **5 meses depois, ele foi contratado.**
-> Agora é código aberto para ajudar você também.
+> Sou profissional de TI, com mais de 30 anos de carreira. Para voltar ao mercado, organizei a busca de
+> emprego como um processo e escrevi uma ferramenta para resolver a parte mais repetitiva. Funcionou:
+> **5 meses depois, fui contratado.** Este repositório reúne o que fiz, para ajudar quem está procurando agora.
 
-Os agentes *Estrategista de Carreira*, *Gerente de Contratação*, *Editor de Currículo* e *Candidato*
-(sobre o [CrewAI](https://docs.crewai.com)) iteram até o currículo atingir nota ≥ 8.5 para a vaga.
+Aqui você encontra duas coisas:
+
+- **O método:** um passo a passo para organizar a busca, da construção do perfil até a retrospectiva. Funciona com qualquer assistente de IA.
+- **A ferramenta:** uma CLI com agentes de IA que automatiza a parte mais trabalhosa do método, o currículo sob medida para cada vaga.
 
 ![antes/depois](images/before_after.png)
 
-## Destaques
+## Sumário
 
-- **Sem histórias falsas.** A IA só seleciona e reescreve o que está nas suas fontes; o `profile_truth.md` tem prioridade sobre tudo.
-- **Um currículo por vaga:** cole a descrição da vaga e receba JSON + LaTeX + PDF sob medida.
-- **Multi-LLM:** OpenAI, Anthropic, Gemini, Grok (xAI) ou AWS Bedrock.
-- **Multi-pessoa:** dados isolados por pessoa (`input/`, `data/`, `outputs/`).
-- **Saída bilíngue:** `--lang pt-BR` (padrão) ou `--lang en`.
-- **Cobertura completa da carreira:** todas as posições são mantidas, da mais recente à mais antiga; sem limite fixo de bullets ou páginas.
-- **Pipeline completo de busca de emprego:** da triagem de vagas à preparação de entrevista e ao rastreamento, em [meu-emprego-novo-pipeline](#pipeline-de-busca-de-emprego-meu-emprego-novo-pipeline).
+1. [O método em uma página](#1-o-método-em-uma-página)
+2. [Escolha a sua trilha](#2-escolha-a-sua-trilha)
+3. [Três cuidados antes de começar](#3-três-cuidados-antes-de-começar)
+4. [Trilha A: método com o seu assistente de IA](#4-trilha-a-método-com-o-seu-assistente-de-ia)
+5. [Trilha B: automatizar o currículo com a CLI](#5-trilha-b-automatizar-o-currículo-com-a-cli)
+6. [Mapa do repositório](#6-mapa-do-repositório)
+7. [Contribuindo e licença](#7-contribuindo-e-licença)
 
-## ⚠️ Privacidade em primeiro lugar
+## 1. O método em uma página
 
-Seu currículo é dado pessoal. Durante a geração, os arquivos são **enviados ao provedor de IA configurado**.
-
-- `input/`, `data/` e `outputs/` estão no `.gitignore` de propósito. **Nunca os versione nem publique os resultados.**
-- Chaves de API só no `.env` (ignorado pelo git). No Bedrock, use um perfil do AWS CLI.
-- Não escreva no `profile_truth.md` nada que você não queira enviar ao provedor.
-
-## Como funciona
+Procurar emprego vira um trabalho de volume: dezenas de vagas, cada uma pedindo um currículo um pouco
+diferente, entrevistas com perguntas previsíveis, mensagens para acompanhar. O método trata isso como
+um **pipeline de dados**, em que cada etapa recebe a saída da anterior:
 
 ```
-input/<voce>/  currículos PDF/DOCX + profile_truth.md (+ about_me.md)
-      │  ingest_resume.py
+PREPARAR     regras do jogo → perfil-mestre → LinkedIn           uma vez
+    │
+    ▼
+ENCONTRAR    busca de vagas → triagem                            em rodadas
+    │
+    ▼
+CANDIDATAR   currículo sob medida → revisão de cobertura         para cada vaga escolhida
+             → preparação de entrevista → envio e registro
+    │
+    ▼
+APRENDER     o que gerou resposta? ajuste perfil e prompts       toda semana, e volta para ENCONTRAR
+```
+
+Três ideias sustentam tudo:
+
+1. **Uma única fonte de verdade.** Você escreve uma vez a versão longa e honesta da sua carreira, o `profile_truth.md`. Todo currículo e toda resposta de entrevista saem dele.
+2. **A IA propõe, você decide.** Ela pode reordenar, resumir e traduzir. Não pode inventar. Nada sai com o seu nome sem você ler.
+3. **Registrar para aprender.** Uma planilha simples mostra quais currículos e fontes de vagas geram resposta.
+
+## 2. Escolha a sua trilha
+
+As duas trilhas seguem o mesmo método. A diferença é **quem produz o currículo**.
+
+| | Trilha A: assistente de IA | Trilha B: CLI com agentes |
+|---|---|---|
+| **Como funciona** | Você usa prompts prontos em um chat de IA | Você roda um comando e os agentes geram os arquivos |
+| **Melhor para** | Começar agora, de qualquer área profissional | Quem programa e vai gerar muitas versões de currículo |
+| **Você precisa de** | Assistente de IA, Python 3.9+ e LaTeX para o PDF | Python 3.12 e chave de API de um provedor de IA |
+| **Custo** | O do seu assistente | Consumo de API a cada execução |
+| **Comece em** | [Seção 4](#4-trilha-a-método-com-o-seu-assistente-de-ia) | [Seção 5](#5-trilha-b-automatizar-o-currículo-com-a-cli) |
+
+**Em dúvida? Comece pela Trilha A.** O perfil-mestre que você escreve nela serve também para a Trilha B.
+
+A CLI cobre apenas parte do método. O restante é igual nas duas trilhas:
+
+| Etapa | Trilha A | Trilha B |
+|---|---|---|
+| Perfil-mestre | `privado/perfil/profile_truth.md` | `input/<voce>/profile_truth.md` |
+| Busca e triagem | Prompts | Prompts: a CLI não busca nem tria vagas |
+| Currículo sob medida | Prompt + scripts | **Automático** |
+| Revisão de cobertura | Prompt | **Automática por posição**; use também o prompt para ver as lacunas da vaga |
+| Preparação de entrevista | Prompt | **Rascunho automático** |
+| Envio, registro e aprendizado | Manual | Manual |
+
+## 3. Três cuidados antes de começar
+
+**Seus dados são seus.** Currículo é dado pessoal, e o que você coloca em um prompt é enviado ao provedor de IA.
+
+- `input/`, `data/`, `outputs/` e `privado/` estão no `.gitignore` de propósito. Nunca os versione nem publique os resultados.
+- Chaves de API ficam só no `.env`, que também é ignorado pelo git.
+- Não escreva no perfil-mestre nada que você não queira enviar ao provedor. Senhas, documentos e dados bancários nunca entram em prompts.
+
+**Você responde pelo que envia.** Nenhuma etapa dispensa a leitura. A IA pode errar datas, exagerar resultados e trocar números. A [revisão de cobertura](meu-emprego-novo-pipeline/docs/05-coverage-review.md) existe para pegar isso, mas a última leitura é sua.
+
+**Golpes de recrutamento existem, e miram quem está procurando.** Recuse entrevista que peça para baixar e rodar código, inclusive um repositório "para achar um bug". Não preencha documento de identidade em candidatura. Pedido de pagamento ou "kit" é golpe. Leia o [guia de segurança](meu-emprego-novo-pipeline/docs/08-golpes-e-seguranca.md) antes da primeira candidatura.
+
+> Este projeto não serve para fabricar experiência, burlar triagem ou candidatar-se em massa sem ler as vagas.
+
+## 4. Trilha A: método com o seu assistente de IA
+
+O tutorial completo está em **[meu-emprego-novo-pipeline/README.md](meu-emprego-novo-pipeline/README.md)**. Cada etapa tem objetivo, passos, critério de conclusão e um prompt pronto, e todos os exemplos usam a persona fictícia Ana Souza.
+
+| # | Etapa | O que você produz | Capítulo | Prompt |
+|---|---|---|---|---|
+| 0 | Princípios | Instruções do assistente | [00](meu-emprego-novo-pipeline/docs/00-principios.md) | |
+| 1 | Perfil-mestre | `profile_truth.md` | [01](meu-emprego-novo-pipeline/docs/01-profile-truth.md) | |
+| 2 | Busca de vagas | Lista numerada de vagas | [02](meu-emprego-novo-pipeline/docs/02-busca-de-vagas.md) | [prompt](meu-emprego-novo-pipeline/prompts/02-busca-vagas.md) |
+| 3 | Triagem | Vagas por aderência | [03](meu-emprego-novo-pipeline/docs/03-triagem.md) | [prompt](meu-emprego-novo-pipeline/prompts/03-triagem.md) |
+| 4 | Currículo sob medida | `resume.json` → `.tex` → PDF | [04](meu-emprego-novo-pipeline/docs/04-curriculo-sob-medida.md) | [prompt](meu-emprego-novo-pipeline/prompts/04-curriculo-sob-medida.md) |
+| 5 | Revisão de cobertura | `coverage_review.md` | [05](meu-emprego-novo-pipeline/docs/05-coverage-review.md) | [prompt](meu-emprego-novo-pipeline/prompts/05-coverage-review.md) |
+| 6 | Preparação de entrevista | `interview_prep.md` | [06](meu-emprego-novo-pipeline/docs/06-interview-prep.md) | [prompt](meu-emprego-novo-pipeline/prompts/06-interview-prep.md) |
+| 7 | Candidatura e rastreamento | `tracker.csv` | [07](meu-emprego-novo-pipeline/docs/07-rastreamento.md) | |
+| 8 | Golpes e segurança | Checklist | [08](meu-emprego-novo-pipeline/docs/08-golpes-e-seguranca.md) | |
+| 9 | LinkedIn | Plano de otimização | [09](meu-emprego-novo-pipeline/docs/09-linkedin.md) | |
+| 10 | Resultados e lições | Retrospectiva | [10](meu-emprego-novo-pipeline/docs/10-resultados-e-licoes.md) | |
+
+## 5. Trilha B: automatizar o currículo com a CLI
+
+> **Feita por um dev, para devs.** Não é um SaaS polido: é uma CLI hackeável. Cada prompt, agente e template é código simples que você pode ler e alterar.
+
+### Como a CLI funciona
+
+Você entrega seus currículos antigos, o perfil-mestre e a descrição da vaga. Os agentes, escritos com [CrewAI](https://docs.crewai.com), produzem um currículo reposicionado para aquela vaga.
+
+```
+input/<voce>/   currículos PDF/DOCX + profile_truth.md (+ about_me.md)
+      │  ingest_resume: extrai tudo para um JSON
       ▼
-data/<voce>/resume.json   ← fonte canônica (nunca sobrescrita)
+data/<voce>/resume.json   ← sua base; os agentes nunca a alteram
       │  + descrição da vaga
       ▼
-agentes (estrategista → gerente de contratação → editor → candidato) ─ iteram até nota ≥ 8.5
+5 agentes: rascunho → avaliação ⇄ revisão → relatório → preparação de entrevista
       ▼
-outputs/<voce>/<cargo>/{json,latex,pdf}
+outputs/<voce>/<cargo>/   currículo em JSON, LaTeX e PDF + revisão + relatório + preparação de entrevista
 ```
 
-## Início rápido
+| Ordem | Agente | O que faz |
+|---|---|---|
+| 1 | Estrategista de Carreira | Reescreve o resumo e reordena as experiências para o cargo |
+| 2 | Gerente de Contratação | Dá uma nota de 1 a 10 e aponta pontos fortes, lacunas e palavras-chave |
+| 3 | Editor de Currículo | Aplica o feedback, salva o JSON e gera o PDF |
+| 2 ⇄ 3 | Gerente e Editor | Repetem avaliação e revisão até a nota atingir 8.5 |
+| 4 | Candidato | Relata a nota final, as melhorias e as lacunas que continuam abertas |
+| 5 | Coach de Entrevista | Escreve o guia de preparação para a entrevista a partir do currículo final |
 
-Requisitos: Python 3.12, uma distribuição LaTeX (para o PDF) e uma chave de API de um provedor.
+O ciclo entre Gerente e Editor termina quando a primeira destas condições acontecer:
+
+1. a nota atinge **8.5**;
+2. uma revisão não melhora a nota, porque insistir em uma lacuna real só empurraria o modelo a inventar;
+3. o limite de revisões é alcançado: 3 por padrão, ajustável com `RESUME_MAX_REVISIONS` no `.env`.
+
+A versão final é sempre a de **melhor nota**, mesmo que a última revisão tenha piorado o currículo.
+
+**O que a ferramenta garante e o que não garante:**
+
+- Os prompts mandam usar só o que está nas suas fontes, e o `profile_truth.md` tem prioridade sobre tudo. Isso reduz invenções, mas não as elimina: confira cada fato, principalmente depois de várias revisões.
+- Todas as posições são mantidas, da mais recente à mais antiga, sem limite fixo de bullets ou páginas. Por isso o resultado pode ser mais longo do que as duas páginas sugeridas no [capítulo 4](meu-emprego-novo-pipeline/docs/04-curriculo-sob-medida.md).
+- **Ficar abaixo de 8.5 é um resultado válido.** A nota é a opinião do modelo sobre a aderência e pode refletir uma lacuna real. Leia o `rating_report.md` e decida; não trate a nota como garantia.
+- Cada revisão consome tokens. Uma execução pode chamar o provedor várias vezes mais do que o número de agentes.
+
+### Passo 1: instalar
+
+Requisitos: Python 3.12 e uma chave de API de um provedor. O [LaTeX](https://www.latex-project.org/get/) é opcional: com `pdflatex` instalado o PDF sai no template completo; sem ele, a CLI gera um PDF mais simples com `reportlab`.
+
+Os comandos abaixo são para Linux, macOS ou Git Bash no Windows.
 
 ```bash
-git clone https://github.com/R238Company/meu-emprego-novo.git && cd meu-emprego-novo
+git clone https://github.com/R238Company/meu-emprego-novo.git
+cd meu-emprego-novo
+python3.12 -m venv .venv         # no Windows: py -3.12 -m venv .venv
+source .venv/bin/activate        # no Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
-cp .env.example .env            # defina LLM_PROVIDER e sua chave
+cp .env.example .env
+```
 
-# Teste com o exemplo fictício: "Dev Procurando", dev Full-Stack (React + Node + Supabase + Vercel)
+### Passo 2: escolher o provedor de IA
+
+Abra o `.env` e preencha `LLM_PROVIDER` e a variável correspondente. **O arquivo vem com `bedrock` como padrão:** troque se você não usa AWS.
+
+| `LLM_PROVIDER` | Preencha | Modelo padrão |
+|---|---|---|
+| `anthropic` | `ANTHROPIC_API_KEY` | Claude Sonnet 4.6 |
+| `openai` | `OPENAI_API_KEY` | GPT-4o |
+| `gemini` | `GOOGLE_API_KEY` | Gemini 2.5 Flash |
+| `grok` | `XAI_API_KEY` | Grok 3 |
+| `bedrock` | `AWS_PROFILE` | Veja [Usar com AWS Bedrock](#usar-com-aws-bedrock) |
+
+### Passo 3: testar com o exemplo fictício
+
+Antes de usar seus dados, gere o currículo de "Dev Procurando", um dev Full-Stack inventado. O teste faz chamadas reais ao provedor e consome créditos.
+
+```bash
 mkdir -p input/dev_procurando data/dev_procurando/job_profiles
 cp examples/dev_procurando/profile_truth.md examples/dev_procurando/job_desc.md input/dev_procurando/
 cp examples/dev_procurando/resume.json data/dev_procurando/
@@ -65,33 +192,97 @@ cp examples/dev_procurando/job_profiles/*.txt data/dev_procurando/job_profiles/
 python main.py --person dev_procurando --job --lang en
 ```
 
-Um resultado pronto do exemplo está em [examples/dev_procurando/resume.pdf](examples/dev_procurando/resume.pdf).
+Quando terminar, o resultado estará em `outputs/dev_procurando/senior_full_stack_engineer_react_node_example_corp/`. Compare com o [PDF de referência](examples/dev_procurando/resume.pdf).
 
-## Como usar (passo a passo)
+### Passo 4: preparar os seus dados
 
-1. **Instale e configure.** Rode o Início rápido acima. No `.env`, defina `LLM_PROVIDER`
-   (`openai`, `anthropic`, `gemini`, `grok` ou `bedrock`) e a chave correspondente.
-2. **Crie sua pasta.** `mkdir input/<voce>`, onde `<voce>` é qualquer identificador (ex.: `maria_dev`).
-   Coloque lá seus currículos atuais (PDF/DOCX).
-3. **Escreva seu `profile_truth.md`.** Copie [examples/dev_procurando/profile_truth.md](examples/dev_procurando/profile_truth.md)
-   para `input/<voce>/` e preencha. Ele é o seu guardrail: o que está lá vale mais que qualquer PDF,
-   e o que estiver em "DO NOT INCLUDE" nunca chega ao currículo.
-   Dica: peça para uma IA entrevistar você e salve a transcrição em `input/<voce>/about_me.md`.
-4. **Gere o JSON base.** `python -m src.scripts.ingest_resume --person <voce>` cria
-   `data/<voce>/resume.json`, a fonte canônica que nunca é sobrescrita. Revise e corrija o que estiver errado.
-5. **Adicione a vaga.** Cole a descrição em `input/<voce>/job_desc.md`.
-6. **Rode.** `python main.py --person <voce> --job` (use `--lang en` para inglês).
-   Os agentes iteram até o currículo atingir nota ≥ 8.5 para a vaga.
-7. **Pegue o resultado** em `outputs/<voce>/<cargo>/` (`json/`, `latex/`, `pdf/`).
-   Leia sempre antes de enviar: você é responsável pelo que sai com o seu nome.
+1. **Crie a sua pasta.** Escolha um identificador sem espaços, como `maria_dev`, e coloque nela pelo menos um currículo atual em PDF ou DOCX:
+   ```bash
+   mkdir -p input/maria_dev
+   ```
+2. **Escreva o `profile_truth.md`** em `input/maria_dev/`. Siga o [capítulo 1](meu-emprego-novo-pipeline/docs/01-profile-truth.md) e use o [modelo](meu-emprego-novo-pipeline/templates/profile_truth.md) ou o [exemplo da CLI](examples/dev_procurando/profile_truth.md). Acrescente uma seção `## ❌ NÃO INCLUIR` com o que nunca pode aparecer no currículo. O que está nesse arquivo vale mais que qualquer PDF.
+3. **Opcional: crie um `about_me.md`.** Peça a uma IA que entreviste você sobre a carreira e salve a transcrição em `input/maria_dev/about_me.md`. Os agentes usam esse arquivo como evidência complementar.
+4. **Gere o JSON base:**
+   ```bash
+   python -m src.scripts.ingest_resume --person maria_dev
+   ```
+5. **Revise `data/maria_dev/resume.json` e corrija o que estiver errado.** Ele é a base de todos os currículos. Os agentes nunca o alteram, mas rodar o `ingest_resume` de novo **sobrescreve o arquivo**, inclusive as suas correções.
 
-Reaproveite a mesma base para várias vagas: salve um perfil curto em `data/<voce>/job_profiles/<nome>.txt`
-e rode `--role <nome>`, ou gere todos com `--all`.
+### Passo 5: gerar o currículo para uma vaga
 
-Outros comandos: `--provider`, `--list-roles`, `--list-people`,
-`python src/scripts/run_compare_pdf.py` (diff estilo GitHub contra o original).
+1. Cole a descrição da vaga em `input/maria_dev/job_desc.md`.
+2. Rode os agentes:
+   ```bash
+   python main.py --person maria_dev --job             # currículo em português
+   python main.py --person maria_dev --job --lang en   # currículo em inglês
+   ```
+3. Pegue o resultado em `outputs/maria_dev/<cargo>/`. A pasta recebe o nome do cargo identificado na vaga:
+   ```
+   outputs/maria_dev/<cargo>/
+   ├── json/resume.json          # conteúdo do currículo
+   ├── latex/output_resume.tex   # versão editável
+   ├── pdf/output_resume.pdf     # o currículo final
+   ├── coverage_review.md        # auditoria de cobertura por posição
+   ├── rating_report.md          # notas de cada avaliação, motivo da parada e lacunas abertas
+   └── interview_prep.md         # rascunho de preparação para entrevista
+   ```
 
-## AWS Bedrock
+### Passo 6: revisar antes de enviar
+
+A CLI termina aqui, mas o método não. Volte ao tutorial:
+
+1. Leia o PDF inteiro e confira cada data, cargo e número ([checklist](meu-emprego-novo-pipeline/docs/04-curriculo-sob-medida.md#conferência-final-checklist)).
+2. Leia o `rating_report.md` e o `coverage_review.md` e rode o [prompt de revisão](meu-emprego-novo-pipeline/prompts/05-coverage-review.md) para listar as lacunas da vaga.
+3. Reescreva o `interview_prep.md` com as suas palavras ([capítulo 6](meu-emprego-novo-pipeline/docs/06-interview-prep.md)).
+4. Candidate-se você mesmo e registre no tracker ([capítulo 7](meu-emprego-novo-pipeline/docs/07-rastreamento.md)).
+
+### Trabalhar com famílias de vagas
+
+Você não precisa de uma versão do zero para cada anúncio. Salve um perfil curto para cada família de vagas e gere de uma vez:
+
+```bash
+mkdir -p data/maria_dev/job_profiles
+# crie um .txt por família, por exemplo data/maria_dev/job_profiles/engenheira_dados.txt
+
+python main.py --person maria_dev --list-roles             # lista os perfis
+python main.py --person maria_dev --role engenheira_dados  # gera um perfil
+python main.py --person maria_dev --all                    # gera todos
+```
+
+Veja um [perfil de exemplo](examples/dev_procurando/job_profiles/senior_fullstack_engineer.txt). O resultado fica em `outputs/maria_dev/<perfil>/`.
+
+### Referência de comandos
+
+| Comando | O que faz |
+|---|---|
+| `python main.py --person <voce> --job` | Gera a partir de `input/<voce>/job_desc.md` |
+| `python main.py --person <voce> --job caminho/vaga.md` | Gera a partir de outro arquivo |
+| `python main.py --person <voce> --role <perfil>` | Gera um perfil de `job_profiles/` |
+| `python main.py --person <voce> --all` | Gera todos os perfis |
+| `python main.py --list-people` | Lista as pessoas em `data/` |
+| `--lang en` | Gera em inglês (padrão: `pt-BR`) |
+| `--provider anthropic` | Troca o provedor só nesta execução |
+
+Defina `PERSON=<voce>` no `.env` para não repetir `--person`.
+
+### Comparar com o currículo original
+
+Para ver um diff colorido entre dois PDFs, copie-os para `outputs/pdf/` com estes nomes exatos e rode o script:
+
+```bash
+mkdir -p outputs/pdf
+cp caminho/do/original.pdf outputs/pdf/original_long_resume.pdf
+cp outputs/<voce>/<cargo>/pdf/output_resume.pdf outputs/pdf/output_resume.pdf
+python src/scripts/run_compare_pdf.py
+```
+
+O resultado fica em `outputs/pdf/compare_diff.pdf`.
+
+![diff entre currículos](images/github_like_diff.png)
+
+### Usar com AWS Bedrock
+
+Crie um perfil restrito no AWS CLI, adapte [infra/aws/bedrock-policy.json](infra/aws/bedrock-policy.json) trocando `123456789012` pelo ID da sua conta e configure o `.env`:
 
 ```dotenv
 LLM_PROVIDER=bedrock
@@ -103,69 +294,51 @@ BEDROCK_EXTRACTION_MODEL_ID=deepseek.v3.2
 BEDROCK_MAX_TOKENS=16384
 ```
 
-Crie um perfil restrito no AWS CLI e adapte [infra/aws/bedrock-policy.json](infra/aws/bedrock-policy.json)
-(troque `123456789012` pelo ID da sua conta). As tentativas extras e o único fallback para o Sonnet valem
-apenas para throttling/indisponibilidade; erros de permissão e validação são propagados.
+As tentativas extras e o único fallback para o Sonnet valem apenas para throttling ou indisponibilidade. Erros de permissão e de validação são propagados.
+
+### Problemas comuns
+
+| Sintoma | Causa e solução |
+|---|---|
+| Erro de Bedrock ou AWS sem você querer usar AWS | O `.env` ainda está com `LLM_PROVIDER=bedrock`. Troque o provedor |
+| `Nenhum arquivo PDF ou DOCX encontrado` | O `ingest_resume` precisa de ao menos um currículo em `input/<voce>/` |
+| Erro sobre `.doc` e `antiword` | Salve o arquivo como `.docx` ou instale o `antiword` |
+| `O LLM retornou JSON inválido` | A resposta bruta fica em `data/resume_raw.txt`. Rode o `ingest_resume` de novo |
+| `No such file` para `data/<voce>/resume.json` | Faltou gerar o JSON base (Passo 4) |
+| `Profile not found` | O nome em `--role` deve ser igual ao do `.txt`. Confira com `--list-roles` |
+| PDF com layout simples | `pdflatex` não encontrado ou falhou, e a CLI usou o `reportlab`. Instale o LaTeX |
+
 Testes offline: `python -m unittest discover -s tests -v`.
 
-## Pipeline de busca de emprego (`meu-emprego-novo-pipeline/`)
-
-O gerador de currículos é só uma etapa de um processo maior. A pasta [meu-emprego-novo-pipeline](meu-emprego-novo-pipeline/README.md)
-traz o passo a passo reproduzível de como a busca foi organizada com ajuda de IA, e terminou em contratação:
-perfil-mestre, vagas triadas, currículo sob medida, revisão de cobertura, preparação para entrevista e acompanhamento das candidaturas.
+## 6. Mapa do repositório
 
 ```
-perfil-mestre → busca → triagem → currículo sob medida → revisão de cobertura
-                                                      → preparação de entrevista
-                                                      → rastreamento → aprendizado
+.
+├── README.md                      # você está aqui
+├── meu-emprego-novo-pipeline/     # O MÉTODO
+│   ├── README.md                  #   tutorial completo, etapa por etapa
+│   ├── docs/                      #   capítulos de aprofundamento (00 a 10)
+│   ├── prompts/                   #   prompts prontos para adaptar
+│   ├── templates/                 #   arquivos em branco para começar
+│   ├── scripts/                   #   validação, JSON → LaTeX, checagem de privacidade
+│   └── exemplo/                   #   fluxo completo da persona Ana Souza
+├── main.py                        # A FERRAMENTA: ponto de entrada da CLI
+├── src/                           #   agentes, provedores de IA e scripts
+├── prompts/                       #   prompts dos agentes
+├── resume/                        #   geração do LaTeX e do PDF
+├── tools/                         #   ferramentas usadas pelos agentes
+├── examples/dev_procurando/       #   exemplo fictício da CLI
+├── tests/                         #   testes offline
+├── infra/aws/                     #   política de exemplo para o Bedrock
+└── spec/                          #   especificação original (histórico; o código atual a substitui)
 ```
 
-> **Ensina o método, não expõe a vida de ninguém.** Todos os exemplos usam uma persona fictícia (Ana Souza).
-> Não serve para fabricar experiência, burlar triagem ou se candidatar em massa sem ler as vagas.
+Pastas que ficam só na sua máquina: `input/`, `data/`, `outputs/` e `meu-emprego-novo-pipeline/privado/`.
 
-| # | Etapa | Saída | Documento |
-|---|-------|-------|-----------|
-| 0 | Princípios | regras de jogo | [00-principios](meu-emprego-novo-pipeline/docs/00-principios.md) |
-| 1 | Perfil-mestre | `profile_truth.md` | [01-profile-truth](meu-emprego-novo-pipeline/docs/01-profile-truth.md) |
-| 2 | Busca de vagas | lista numerada de vagas | [02-busca-de-vagas](meu-emprego-novo-pipeline/docs/02-busca-de-vagas.md) |
-| 3 | Triagem | vagas por aderência | [03-triagem](meu-emprego-novo-pipeline/docs/03-triagem.md) |
-| 4 | Currículo sob medida | `resume.json` → `.tex` → PDF | [04-curriculo-sob-medida](meu-emprego-novo-pipeline/docs/04-curriculo-sob-medida.md) |
-| 5 | Revisão de cobertura | `coverage_review.md` | [05-coverage-review](meu-emprego-novo-pipeline/docs/05-coverage-review.md) |
-| 6 | Preparação de entrevista | `interview_prep.md` | [06-interview-prep](meu-emprego-novo-pipeline/docs/06-interview-prep.md) |
-| 7 | Rastreamento | `tracker.csv` | [07-rastreamento](meu-emprego-novo-pipeline/docs/07-rastreamento.md) |
-| 8 | Golpes e segurança | checklist | [08-golpes-e-seguranca](meu-emprego-novo-pipeline/docs/08-golpes-e-seguranca.md) |
-| 9 | LinkedIn | plano de otimização | [09-linkedin](meu-emprego-novo-pipeline/docs/09-linkedin.md) |
-| 10 | Resultados e lições | retrospectiva | [10-resultados-e-licoes](meu-emprego-novo-pipeline/docs/10-resultados-e-licoes.md) |
+## 7. Contribuindo e licença
 
-Teste o pipeline com a persona de exemplo (Python 3.9+, só biblioteca padrão):
+Veja [CONTRIBUTING.md](CONTRIBUTING.md). São especialmente bem-vindas adaptações para outras áreas profissionais, novos templates de currículo e relatos de golpes sem nomes reais. Nunca inclua dados pessoais reais em issues ou PRs.
 
-```bash
-cd meu-emprego-novo-pipeline
-python3 scripts/validar_json.py exemplo/resume.json
-python3 scripts/json_para_latex.py exemplo/resume.json exemplo/curriculo.tex
-bash scripts/checar_privacidade.sh   # rode antes de cada commit
-```
+Se este material ajudar você a conseguir uma vaga, conte a sua história em uma issue.
 
-### Regras de ouro
-
-1. **Uma única fonte de verdade.** Todo currículo deriva do `profile_truth.md`; fato que não está lá não vai para o currículo.
-2. **Nunca invente métricas.** A revisão de cobertura existe para pegar números divergentes.
-3. **A IA propõe, você decide.** Leia tudo o que for enviado em seu nome.
-4. **Lacuna declarada vale mais que maquiagem.**
-5. **Exclusões são regra, não sugestão.**
-6. **Segredos ficam fora do chat.** Senhas, documentos e dados bancários não entram em prompts.
-7. **Versione o método, não os dados.** O que é seu fica em `privado/`, nunca versionada.
-
-### Segurança: golpes de recrutamento
-
-- Entrevista que pede para baixar e rodar código (inclusive um repositório "para achar um bug"): recuse.
-- Formulário que pede documento de identidade na candidatura: deixe em branco; documento só na contratação, por canal oficial.
-- Pedido de pagamento, taxa ou "kit": golpe.
-- Domínio de e-mail diferente do da empresa, urgência exagerada, proposta boa demais: confirme pelo site oficial.
-
-Versão completa, instalação detalhada, FAQ e prompts de cada etapa em [meu-emprego-novo-pipeline/README.md](meu-emprego-novo-pipeline/README.md).
-
-## Contribuindo e licença
-
-Veja [CONTRIBUTING.md](CONTRIBUTING.md). Nunca inclua dados pessoais reais em issues ou PRs. Licença MIT, baseada no projeto original de Rushi Chaudhari
-([0xrushi](https://github.com/0xrushi)); veja [LICENSE](LICENSE).
+Licença MIT, baseada no projeto original de Rushi Chaudhari ([0xrushi](https://github.com/0xrushi)). Veja [LICENSE](LICENSE).

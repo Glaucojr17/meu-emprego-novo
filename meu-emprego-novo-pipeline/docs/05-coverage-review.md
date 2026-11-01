@@ -11,13 +11,14 @@ Auditar o currículo gerado contra **duas** coisas:
 `vaga.md`, `resume.json`, `profile_truth.md`.
 
 ## Saída
-`coverage_review.md` com cinco blocos:
+`coverage_review.md` com seis blocos:
 
 1. **Fontes usadas**: quais arquivos foram considerados.
 2. **Preservado**: empregadores, cargos, datas e quantidade de destaques mantidos.
 3. **Cobertura forte**: requisitos da vaga com evidência clara no currículo.
 4. **Cobertura parcial**: requisitos tocados indiretamente.
 5. **Lacunas não inventadas**: requisitos que o currículo **não** comprova, listados nominalmente.
+6. **Inconsistências**: fatos, datas ou números do currículo que não batem com o perfil-mestre.
 
 E uma declaração final no estilo: *"Esta revisão não afirma que todos os requisitos obrigatórios são atendidos."*
 
@@ -26,7 +27,7 @@ Em versões iniciais do meu processo, currículos e materiais de entrevista cheg
 
 ## Passo a passo
 1. Rode o prompt de [`prompts/05-coverage-review.md`](../prompts/05-coverage-review.md).
-2. Leia a seção de lacunas primeiro.
+2. Leia primeiro as seções de lacunas e de inconsistências. Corrija no currículo o que não bater com o perfil-mestre.
 3. Para cada lacuna obrigatória, decida:
    - **candidatar-se mesmo assim** (e se preparar para falar sobre isso);
    - **ajustar o currículo** (se for um fato verdadeiro que ficou de fora; atualize o perfil-mestre);

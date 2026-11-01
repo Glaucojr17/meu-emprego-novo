@@ -20,6 +20,8 @@ from prompts.job_application_prompts import (
     get_interview_coach_prompt,
     get_strategist_prompt,
 )
+from resume.generator import generate
+from src.agents.refinement import DEFAULT_MAX_REVISIONS, TARGET_RATING, refine
 from tools.resume_tools import (
     generate_resume_tool,
     pgcount_tool,
@@ -90,6 +92,60 @@ class JobApplicationCrew:
         from src.llm_factory import get_llm
         return get_llm(provider=self.provider)
 
+    @property
+    def _resume_path(self) -> Path:
+        return Path(self.output_dir, "json", "resume.json")
+
+    def _current_resume(self) -> dict:
+        return json.loads(self._resume_path.read_text(encoding="utf-8"))
+
+    def _kickoff(self, agents, tasks):
+        crew = Crew(agents=agents, tasks=tasks, verbose=True, process=Process.sequential)
+        result = crew.kickoff()
+        logger.info(crew.usage_metrics)
+        logger.info(f"Token Usage: {result.token_usage}")
+        return result
+
+    def _snapshot(self):
+        return self._resume_path.read_bytes(), self.coverage_audit
+
+    def _restore(self, state):
+        resume_bytes, self.coverage_audit = state
+        self._resume_path.write_bytes(resume_bytes)
+
+    def _render(self):
+        generate(
+            json_path=str(self._resume_path),
+            latex_path=os.path.join(self.output_dir, "latex", "output_resume.tex"),
+            pdf_dir=os.path.join(self.output_dir, "pdf"),
+        )
+
+    def _evaluate(self, hiring_manager) -> str:
+        task = Task(
+            description=dedent(get_hr_prompt(self.job_description, self._current_resume()) + self.source_context
+                + "\nDo not recommend cuts for page count."),
+            agent=hiring_manager,
+            expected_output="An evaluation report ending with the line 'FINAL_RATING: <number>'.",
+        )
+        self._kickoff([hiring_manager], [task])
+        return task.output.raw
+
+    def _revise(self, resume_editor, feedback: str) -> None:
+        task = Task(
+            description=dedent(
+                get_editor_prompt(
+                    self.job_description, self._current_resume(), self.original_resume, self.language
+                ) + self.source_context + f"\n### Hiring Manager's Latest Evaluation\n{feedback}\n"
+            ),
+            agent=resume_editor,
+            expected_output=(
+                "A comprehensive resume saved as JSON and PDF, addressing the hiring manager's "
+                "feedback, with a per-position coverage audit and confirmation of the save."
+            ),
+        )
+        self._kickoff([resume_editor], [task])
+        self.coverage_audit = task.output.raw
+
     def run(self):
         llm_kwargs = {"llm": self.llm} if self.llm else {}
 
@@ -142,10 +198,10 @@ class JobApplicationCrew:
         job_applicant = Agent(
             name="Job Applicant",
             role="Motivated professional seeking to optimize their job application",
-            goal="Secure a job offer by iterating on the resume until it achieves a rating ≥ 8.5",
+            goal="Report honestly how the resume was optimized and what remains open before applying",
             backstory=(
-                "You are determined to present yourself in the best possible light. You "
-                "coordinate between the hiring manager and editor until your resume is excellent."
+                "You want the best application you can truthfully send. You know a rating below "
+                "target can reflect a real gap, and you would rather know it than hide it."
             ),
             verbose=True,
             allow_delegation=False,
@@ -206,19 +262,46 @@ class JobApplicationCrew:
             context=[reposition_resume, evaluate_resume],
         )
 
+        self._kickoff(
+            [career_strategist, hiring_manager, resume_editor],
+            [reposition_resume, evaluate_resume, edit_resume],
+        )
+        self.coverage_audit = getattr(getattr(edit_resume, "output", None), "raw", None)
+
+        refinement = refine(
+            evaluate=lambda: self._evaluate(hiring_manager),
+            revise=lambda feedback: self._revise(resume_editor, feedback),
+            snapshot=self._snapshot,
+            restore=self._restore,
+            target=TARGET_RATING,
+            max_revisions=int(os.getenv("RESUME_MAX_REVISIONS") or DEFAULT_MAX_REVISIONS),
+        )
+        logger.info(f"Refinement finished:\n{refinement.summary()}")
+
+        # The PDF must always match the final JSON, whatever the last agent did.
+        self._render()
+        final_resume = self._current_resume()
+
         optimize_application = Task(
-            description=dedent(get_applicant_prompt(self.job_description, self.original_resume, self.language) + self.source_context),
+            description=dedent(
+                get_applicant_prompt(
+                    self.job_description,
+                    final_resume,
+                    refinement.summary(),
+                    refinement.final_feedback,
+                    self.language,
+                ) + self.source_context
+            ),
             agent=job_applicant,
             expected_output=(
-                "A report with: final resume rating (≥ 8.5), summary of key improvements "
-                "made across iterations, and any additional recommendations from the hiring manager."
+                "A report with: final rating and whether the target was reached, key "
+                "improvements made, and the gaps that remain open."
             ),
-            context=[reposition_resume, evaluate_resume, edit_resume],
         )
 
         prepare_interview = Task(
             description=dedent(
-                get_interview_coach_prompt(self.job_description, self.original_resume, self.language) + self.source_context
+                get_interview_coach_prompt(self.job_description, final_resume, self.language) + self.source_context
             ),
             agent=interview_coach,
             expected_output=(
@@ -227,32 +310,13 @@ class JobApplicationCrew:
                 "suggested answers, key talking points, red flags to address, questions to ask "
                 "the interviewer, pre-interview checklist, and salary/negotiation tips."
             ),
-            context=[reposition_resume, edit_resume, optimize_application],
+            context=[optimize_application],
         )
 
-        crew = Crew(
-            agents=[
-                career_strategist,
-                hiring_manager,
-                resume_editor,
-                job_applicant,
-                interview_coach,
-            ],
-            tasks=[
-                reposition_resume,
-                evaluate_resume,
-                edit_resume,
-                optimize_application,
-                prepare_interview,
-            ],
-            verbose=True,
-            process=Process.sequential,
+        result = self._kickoff(
+            [job_applicant, interview_coach],
+            [optimize_application, prepare_interview],
         )
-
-        result = crew.kickoff()
-
-        logger.info(crew.usage_metrics)
-        logger.info(f"Token Usage: {result.token_usage}")
 
         interview_content = getattr(getattr(prepare_interview, "output", None), "raw", None)
         if interview_content:
@@ -261,9 +325,14 @@ class JobApplicationCrew:
                 f.write(interview_content)
             logger.info(f"Interview prep saved to: {interview_path}")
 
-        audit = getattr(getattr(edit_resume, "output", None), "raw", None)
-        if audit:
-            Path(self.output_dir, "coverage_review.md").write_text(audit, encoding="utf-8")
+        if self.coverage_audit:
+            Path(self.output_dir, "coverage_review.md").write_text(self.coverage_audit, encoding="utf-8")
+
+        report = getattr(getattr(optimize_application, "output", None), "raw", None)
+        if report:
+            Path(self.output_dir, "rating_report.md").write_text(
+                f"{refinement.summary()}\n\n{report}\n", encoding="utf-8"
+            )
 
         role_label = f" [{self.role}]" if self.role else ""
         logger.info(f"Outputs{role_label} saved to: {self.output_dir}/")

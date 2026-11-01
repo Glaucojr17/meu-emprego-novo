@@ -26,7 +26,7 @@ Peça sempre este formato, porque ele facilita as próximas etapas:
 4. ...
 ```
 
-A **numeração contínua** entre os grupos permite instruções curtas como "candidate-se à 2, 5 e 8". Separar simplificada de externa ajuda a planejar o esforço: externa costuma exigir cadastro e formulários longos.
+A **numeração contínua** entre os grupos permite instruções curtas como "avalie a 2, a 5 e a 8". Separar simplificada de externa ajuda a planejar o esforço: externa costuma exigir cadastro e formulários longos.
 
 ## Onde buscar
 - Plataformas de vagas com filtros de data e modalidade.
