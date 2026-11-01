@@ -183,8 +183,8 @@ def main():
     )
     parser.add_argument(
         "--person",
-        default=os.getenv("PERSON", "jane_doe"),
-        help="Para quem gerar o resume.json (ex: jane_doe, john_smith). Padrão: PERSON no .env, ou 'jane_doe'",
+        default=os.getenv("PERSON", "dev_procurando"),
+        help="Para quem gerar o resume.json (ex: dev_procurando, dev_procurando). Padrão: PERSON no .env, ou 'dev_procurando'",
     )
     parser.add_argument(
         "--input-dir",

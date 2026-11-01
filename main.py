@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-DEFAULT_PERSON = os.getenv("PERSON", "jane_doe")
+DEFAULT_PERSON = os.getenv("PERSON", "dev_procurando")
 
 
 def list_people() -> list[str]:
@@ -136,13 +136,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=f"""
 Exemplos de uso:
-  python main.py --person john_smith --role data_scientist
+  python main.py --person dev_procurando --role data_scientist
   python main.py --role ai_engineer --provider anthropic     # usa PERSON do .env (padrão: {DEFAULT_PERSON})
   python main.py --job                          # usa input/<person>/job_desc.md
   python main.py --job input/vaga_senior.md     # aponta para outro arquivo
   python main.py --all
-  python main.py --all --person john_smith
-  python main.py --list-roles --person john_smith
+  python main.py --all --person dev_procurando
+  python main.py --list-roles --person dev_procurando
   python main.py --list-people
         """,
     )
@@ -150,7 +150,7 @@ Exemplos de uso:
         "--person",
         metavar="PERSON",
         default=DEFAULT_PERSON,
-        help=f"Para quem gerar o currículo (ex: jane_doe, john_smith). Padrão: PERSON no .env, ou '{DEFAULT_PERSON}'",
+        help=f"Para quem gerar o currículo (ex: dev_procurando, dev_procurando). Padrão: PERSON no .env, ou '{DEFAULT_PERSON}'",
     )
     parser.add_argument(
         "--role",

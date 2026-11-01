@@ -38,11 +38,11 @@ class JobApplicationCrew:
     def __init__(
         self,
         role: str = None,
-        job_profile_path: str = "data/jane_doe/job_desc.txt",
+        job_profile_path: str = "data/dev_procurando/job_desc.txt",
         output_dir: str = "outputs",
         provider: str = None,
         language: str = "pt-BR",
-        original_resume_path: str = "data/jane_doe/resume.json",
+        original_resume_path: str = "data/dev_procurando/resume.json",
     ):
         self.role = role
         self.job_profile_path = job_profile_path

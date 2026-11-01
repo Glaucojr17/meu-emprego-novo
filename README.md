@@ -1,80 +1,94 @@
-# Mid-Life Agent (*Agente da Meia Idade*)
-
-🇧🇷 [Leia em português](README.pt-BR.md)
+# Agente da Meia Idade (*Mid-Life Agent*)
 
 ![logo](images/logo.jpeg)
 
-A multi-agent AI team that repositions your résumé for each job you apply to.
-It was built by a 30-year IT veteran to get back into the job market, and it worked:
-**5 months later, he was hired.** Now it is open source so it can help you too.
+Uma equipe de agentes de IA que reposiciona o seu currículo para cada vaga.
 
-A *Career Strategist*, a *Hiring Manager*, a *Resume Editor* and a *Job Applicant* agent
-(built on [CrewAI](https://docs.crewai.com)) iterate until the résumé scores ≥ 8.5 against the target job.
+> **Feita por um dev, para devs.** Não é um SaaS polido: é uma ferramenta que um desenvolvedor
+> escreveu para resolver o próprio problema. Por isso é uma CLI, é hackeável, e cada prompt, agente
+> e template é código simples que você pode ler e alterar. Foi criada por um profissional de TI com
+> 30+ anos de carreira para voltar ao mercado, e funcionou: **5 meses depois, ele foi contratado.**
+> Agora é código aberto para ajudar você também.
 
-![before/after](images/before_after.png)
+Os agentes *Estrategista de Carreira*, *Gerente de Contratação*, *Editor de Currículo* e *Candidato*
+(sobre o [CrewAI](https://docs.crewai.com)) iteram até o currículo atingir nota ≥ 8.5 para a vaga.
 
-## Highlights
+![antes/depois](images/before_after.png)
 
-- **No invented facts.** The AI only selects and rephrases what is in your sources; your
-  `profile_truth.md` overrides everything else.
-- **One résumé per job.** Paste a job description, get a tailored JSON + LaTeX + PDF.
-- **Multi-LLM:** OpenAI, Anthropic, Gemini, Grok (xAI) or AWS Bedrock.
-- **Multi-person:** data is isolated per person (`input/<person>/`, `data/<person>/`, `outputs/<person>/`).
-- **Bilingual output:** `--lang pt-BR` (default) or `--lang en`.
-- **Full career coverage:** every position is kept, newest first; no fixed bullet or page limit.
+## Destaques
 
-## ⚠️ Privacy first
+- **Sem histórias falsas.** A IA só seleciona e reescreve o que está nas suas fontes; o `profile_truth.md` tem prioridade sobre tudo.
+- **Um currículo por vaga:** cole a descrição da vaga e receba JSON + LaTeX + PDF sob medida.
+- **Multi-LLM:** OpenAI, Anthropic, Gemini, Grok (xAI) ou AWS Bedrock.
+- **Multi-pessoa:** dados isolados por pessoa (`input/`, `data/`, `outputs/`).
+- **Saída bilíngue:** `--lang pt-BR` (padrão) ou `--lang en`.
+- **Cobertura completa da carreira:** todas as posições são mantidas, da mais recente à mais antiga; sem limite fixo de bullets ou páginas.
 
-Your résumé is personal data. During generation, your files are **sent to the LLM provider you configure**.
+## ⚠️ Privacidade em primeiro lugar
 
-- `input/`, `data/` and `outputs/` are git-ignored on purpose. **Never commit them or publish your fork's outputs.**
-- Put API keys only in `.env` (git-ignored). For Bedrock, use an AWS CLI profile, never keys in files.
-- Do not write into `profile_truth.md` anything you are not comfortable sending to your provider.
+Seu currículo é dado pessoal. Durante a geração, os arquivos são **enviados ao provedor de IA configurado**.
 
-## How it works
+- `input/`, `data/` e `outputs/` estão no `.gitignore` de propósito. **Nunca os versione nem publique os resultados.**
+- Chaves de API só no `.env` (ignorado pelo git). No Bedrock, use um perfil do AWS CLI.
+- Não escreva no `profile_truth.md` nada que você não queira enviar ao provedor.
+
+## Como funciona
 
 ```
-input/<you>/  PDF/DOCX résumés + profile_truth.md (+ about_me.md)
+input/<voce>/  currículos PDF/DOCX + profile_truth.md (+ about_me.md)
       │  ingest_resume.py
       ▼
-data/<you>/resume.json   ← canonical source (never overwritten)
-      │  + job description
+data/<voce>/resume.json   ← fonte canônica (nunca sobrescrita)
+      │  + descrição da vaga
       ▼
-agents (strategist → hiring manager → editor → applicant) ─ loop until score ≥ 8.5
+agentes (estrategista → gerente de contratação → editor → candidato) ─ iteram até nota ≥ 8.5
       ▼
-outputs/<you>/<role>/{json,latex,pdf}
+outputs/<voce>/<cargo>/{json,latex,pdf}
 ```
 
-## Quick start
+## Início rápido
 
-Requirements: Python 3.12, a LaTeX distribution (for PDF), and an API key for one provider.
+Requisitos: Python 3.12, uma distribuição LaTeX (para o PDF) e uma chave de API de um provedor.
 
 ```bash
-git clone <this-repo> && cd mid-life-agent
+git clone https://github.com/R238Company/meu-emprego-novo.git && cd meu-emprego-novo
 pip install -r requirements.txt
-cp .env.example .env            # set LLM_PROVIDER and your key
+cp .env.example .env            # defina LLM_PROVIDER e sua chave
 
-# Try the fictional example (Jane Doe)
-mkdir -p input/jane_doe data/jane_doe/job_profiles
-cp examples/jane_doe/profile_truth.md examples/jane_doe/job_desc.md input/jane_doe/
-cp examples/jane_doe/resume.json data/jane_doe/
-cp examples/jane_doe/job_profiles/*.txt data/jane_doe/job_profiles/
+# Teste com o exemplo fictício: "Dev Procurando", dev Full-Stack (React + Node + Supabase + Vercel)
+mkdir -p input/dev_procurando data/dev_procurando/job_profiles
+cp examples/dev_procurando/profile_truth.md examples/dev_procurando/job_desc.md input/dev_procurando/
+cp examples/dev_procurando/resume.json data/dev_procurando/
+cp examples/dev_procurando/job_profiles/*.txt data/dev_procurando/job_profiles/
 
-python main.py --person jane_doe --job --lang en
+python main.py --person dev_procurando --job --lang en
 ```
 
-### With your own data
+Um resultado pronto do exemplo está em [examples/dev_procurando/resume.pdf](examples/dev_procurando/resume.pdf).
 
-1. Create `input/<you>/` and drop your current résumés (PDF/DOCX) there.
-2. Copy `examples/jane_doe/profile_truth.md` to `input/<you>/` and fill it in. This is your guardrail.
-   (A good way: have an AI interview you and save the transcript as `input/<you>/about_me.md`.)
-3. Generate your base JSON: `python -m src.scripts.ingest_resume --person <you>`
-4. Save a job description as `input/<you>/job_desc.md` and run `python main.py --person <you> --job`
-5. Find results in `outputs/<you>/<role>/`.
+## Como usar (passo a passo)
 
-Other commands: `--role <name>` (profile in `data/<you>/job_profiles/<name>.txt`), `--all`,
-`--provider <openai|anthropic|gemini|grok|bedrock>`, `--list-roles`, `--list-people`,
-`python src/scripts/run_compare_pdf.py` (GitHub-style diff vs. the original).
+1. **Instale e configure.** Rode o Início rápido acima. No `.env`, defina `LLM_PROVIDER`
+   (`openai`, `anthropic`, `gemini`, `grok` ou `bedrock`) e a chave correspondente.
+2. **Crie sua pasta.** `mkdir input/<voce>`, onde `<voce>` é qualquer identificador (ex.: `maria_dev`).
+   Coloque lá seus currículos atuais (PDF/DOCX).
+3. **Escreva seu `profile_truth.md`.** Copie [examples/dev_procurando/profile_truth.md](examples/dev_procurando/profile_truth.md)
+   para `input/<voce>/` e preencha. Ele é o seu guardrail: o que está lá vale mais que qualquer PDF,
+   e o que estiver em "DO NOT INCLUDE" nunca chega ao currículo.
+   Dica: peça para uma IA entrevistar você e salve a transcrição em `input/<voce>/about_me.md`.
+4. **Gere o JSON base.** `python -m src.scripts.ingest_resume --person <voce>` cria
+   `data/<voce>/resume.json`, a fonte canônica que nunca é sobrescrita. Revise e corrija o que estiver errado.
+5. **Adicione a vaga.** Cole a descrição em `input/<voce>/job_desc.md`.
+6. **Rode.** `python main.py --person <voce> --job` (use `--lang en` para inglês).
+   Os agentes iteram até o currículo atingir nota ≥ 8.5 para a vaga.
+7. **Pegue o resultado** em `outputs/<voce>/<cargo>/` (`json/`, `latex/`, `pdf/`).
+   Leia sempre antes de enviar: você é responsável pelo que sai com o seu nome.
+
+Reaproveite a mesma base para várias vagas: salve um perfil curto em `data/<voce>/job_profiles/<nome>.txt`
+e rode `--role <nome>`, ou gere todos com `--all`.
+
+Outros comandos: `--provider`, `--list-roles`, `--list-people`,
+`python src/scripts/run_compare_pdf.py` (diff estilo GitHub contra o original).
 
 ## AWS Bedrock
 
@@ -83,20 +97,17 @@ LLM_PROVIDER=bedrock
 AWS_PROFILE=mid-life-agent
 AWS_DEFAULT_REGION=us-east-1
 BEDROCK_MODEL_ID=us.anthropic.claude-opus-4-6-v1
-BEDROCK_FALLBACK_MODEL_ID=us.anthropic.claude-sonnet-4-6   # empty disables fallback
+BEDROCK_FALLBACK_MODEL_ID=us.anthropic.claude-sonnet-4-6   # vazio desativa o fallback
 BEDROCK_EXTRACTION_MODEL_ID=deepseek.v3.2
 BEDROCK_MAX_TOKENS=16384
 ```
 
-Create a restricted AWS CLI profile and adapt [infra/aws/bedrock-policy.json](infra/aws/bedrock-policy.json)
-(replace `123456789012` with your account ID). Retries and the single Sonnet fallback apply only to
-throttling/unavailability; permission and validation errors are propagated. Offline tests:
-`python -m unittest discover -s tests -v`.
+Crie um perfil restrito no AWS CLI e adapte [infra/aws/bedrock-policy.json](infra/aws/bedrock-policy.json)
+(troque `123456789012` pelo ID da sua conta). As tentativas extras e o único fallback para o Sonnet valem
+apenas para throttling/indisponibilidade; erros de permissão e validação são propagados.
+Testes offline: `python -m unittest discover -s tests -v`.
 
-## Contributing
+## Contribuindo e licença
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Never include real personal data in issues or PRs.
-
-## License & credits
-
-MIT. Based on the original project by Rushi Chaudhari ([0xrushi](https://github.com/0xrushi)); see [LICENSE](LICENSE).
+Veja [CONTRIBUTING.md](CONTRIBUTING.md). Nunca inclua dados pessoais reais em issues ou PRs. Licença MIT, baseada no projeto original de Rushi Chaudhari
+([0xrushi](https://github.com/0xrushi)); veja [LICENSE](LICENSE).
