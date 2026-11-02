@@ -24,6 +24,7 @@ Aqui você encontra duas coisas:
 5. [Trilha B: automatizar o currículo com a CLI](#5-trilha-b-automatizar-o-currículo-com-a-cli)
 6. [Mapa do repositório](#6-mapa-do-repositório)
 7. [Contribuindo e licença](#7-contribuindo-e-licença)
+8. [Sobre o autor](#8-sobre-o-autor)
 
 ## 1. O método em uma página
 
@@ -342,3 +343,13 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md). São especialmente bem-vindas adaptaç�
 Se este material ajudar você a conseguir uma vaga, conte a sua história em uma issue.
 
 Licença MIT, baseada no projeto original de Rushi Chaudhari ([0xrushi](https://github.com/0xrushi)). Veja [LICENSE](LICENSE).
+
+## 8. Sobre o autor
+
+**Ricardo Martins** é profissional de TI, especialista em Microsoft Dynamics, e está em transição de carreira para Ciência de Dados. Este método nasceu da própria busca por recolocação: 91 candidaturas, 27 entrevistas e uma ferramenta para não refazer o currículo à mão a cada vaga.
+
+- GitHub: [github.com/trozobador](https://github.com/trozobador), onde ficam os demais projetos e o portfólio de transição
+- LinkedIn: [Ricardo Martins](https://www.linkedin.com/in/costaricardomartins)
+- X: [@ricardoparallax](https://x.com/ricardoparallax)
+
+Dúvidas, sugestões ou relatos de uso são bem-vindos nas issues deste repositório ou por qualquer um dos canais acima.
