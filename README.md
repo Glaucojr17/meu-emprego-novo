@@ -346,7 +346,7 @@ Licença MIT, baseada no projeto original de Rushi Chaudhari ([0xrushi](https://
 
 ## 8. Sobre o autor
 
-**Ricardo Martins** é profissional de TI, especialista em Microsoft Dynamics, e está em transição de carreira para Ciência de Dados. Este método nasceu da própria busca por recolocação: 91 candidaturas, 27 entrevistas e uma ferramenta para não refazer o currículo à mão a cada vaga.
+**Ricardo Martins** é profissional de TI, especialista em Microsoft Dynamics, e está se especializando em Ciência de Dados. Este método nasceu da própria busca por recolocação: 91 candidaturas, 27 entrevistas e uma ferramenta para não refazer o currículo à mão a cada vaga.
 
 - GitHub: [github.com/trozobador](https://github.com/trozobador), onde ficam os demais projetos e o portfólio de transição
 - LinkedIn: [Ricardo Martins](https://www.linkedin.com/in/costaricardomartins)
