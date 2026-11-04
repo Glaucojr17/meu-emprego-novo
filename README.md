@@ -8,6 +8,12 @@
 > emprego como um processo e escrevi uma ferramenta para resolver a parte mais repetitiva. Funcionou:
 > **5 meses depois, fui contratado.** Este repositório reúne o que fiz, para ajudar quem está procurando agora.
 
+> **Nota sobre esta adaptação:** a história acima é dos autores do projeto original,
+> [R238Company/meu-emprego-novo](https://github.com/R238Company/meu-emprego-novo).
+> Esta versão mantém a licença MIT e acrescenta uma triagem local de alertas e
+> acompanhamento de candidaturas. Ela não envia inscrições automaticamente.
+> Consulte [como usar a triagem de vagas](docs/opportunities.md).
+
 Aqui você encontra duas coisas:
 
 - **O método:** um passo a passo para organizar a busca, da construção do perfil às retrospectivas que você repete para refinar o processo. Funciona com qualquer assistente de IA.
