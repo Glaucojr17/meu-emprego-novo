@@ -15,6 +15,15 @@
 > Consulte [como usar a triagem de vagas](docs/opportunities.md).
 > Para instalar na VM do homelab, siga o [passo a passo da devops-ci](docs/devops-ci-setup.md).
 
+### Painel privado e coleta programada
+
+O [guia de produção no homelab](docs/painel-producao-homelab.md) instala uma segunda interface,
+independente do CrewAI: consulta Remotive e páginas públicas Greenhouse/Lever,
+lê alertas locais ou da sua própria caixa Gmail via OAuth, guarda vagas em SQLite e
+prepara currículo PDF e roteiro por vaga com base no `resume.json` validado.
+Há filtros, acompanhamento manual e execução diária por systemd. O painel fica
+acessível somente por túnel SSH; nenhuma candidatura é enviada pela ferramenta.
+
 Aqui você encontra duas coisas:
 
 - **O método:** um passo a passo para organizar a busca, da construção do perfil às retrospectivas que você repete para refinar o processo. Funciona com qualquer assistente de IA.

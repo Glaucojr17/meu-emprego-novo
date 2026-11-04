@@ -1,0 +1,10 @@
+[Unit]
+Description=Atualizar vagas diariamente às 07h (horário da VM)
+
+[Timer]
+OnCalendar=*-*-* 07:00:00
+Persistent=true
+Unit=meu-emprego-coleta.service
+
+[Install]
+WantedBy=timers.target

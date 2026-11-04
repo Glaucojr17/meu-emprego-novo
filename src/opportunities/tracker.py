@@ -81,7 +81,11 @@ def direct_url(value):
 
 
 def from_eml(path):
-    message = BytesParser(policy=email_policy.default).parsebytes(path.read_bytes())
+    return from_eml_bytes(path.read_bytes())
+
+
+def from_eml_bytes(raw):
+    message = BytesParser(policy=email_policy.default).parsebytes(raw)
     subject = str(message.get("subject", "Alerta de vaga"))[:200]
     results = []
     parts = message.walk() if message.is_multipart() else [message]

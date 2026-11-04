@@ -1,5 +1,5 @@
 {
-  "titles": ["DevOps", "SRE", "Infraestrutura", "Platform Engineer"],
+  "titles": ["DevOps", "SRE", "Infraestrutura", "Platform Engineer", "DevSecOps", "Cloud Engineer", "Node.js"],
   "skills": ["Kubernetes", "EKS", "Terraform", "Linux", "Docker", "Azure DevOps", "CI/CD", "Ansible", "Grafana", "Prometheus"],
   "exclude": ["presencial", "híbrido", "hibrido"],
   "remote_only": true
