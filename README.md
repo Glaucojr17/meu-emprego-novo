@@ -13,6 +13,7 @@
 > Esta versão mantém a licença MIT e acrescenta uma triagem local de alertas e
 > acompanhamento de candidaturas. Ela não envia inscrições automaticamente.
 > Consulte [como usar a triagem de vagas](docs/opportunities.md).
+> Para instalar na VM do homelab, siga o [passo a passo da devops-ci](docs/devops-ci-setup.md).
 
 Aqui você encontra duas coisas:
 
@@ -166,7 +167,7 @@ Requisitos: Python 3.12 e uma chave de API de um provedor. O [LaTeX](https://www
 Os comandos abaixo são para Linux, macOS ou Git Bash no Windows.
 
 ```bash
-git clone https://github.com/R238Company/meu-emprego-novo.git
+git clone https://github.com/Glaucojr17/meu-emprego-novo.git
 cd meu-emprego-novo
 python3.12 -m venv .venv         # no Windows: py -3.12 -m venv .venv
 source .venv/bin/activate        # no Git Bash: source .venv/Scripts/activate
