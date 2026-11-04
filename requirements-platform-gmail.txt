@@ -1,0 +1,3 @@
+# Instalação opcional para ler alertas da própria conta Gmail via OAuth.
+google-api-python-client>=2,<3
+google-auth-oauthlib>=1,<2

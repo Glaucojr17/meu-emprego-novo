@@ -1,0 +1,14 @@
+[Unit]
+Description=Coleta diária de vagas e preparação de documentos
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=glaucojunior
+Group=glaucojunior
+WorkingDirectory=/home/glaucojunior/projetos/meu-emprego-novo
+ExecStart=/home/glaucojunior/projetos/meu-emprego-novo/.venv-platform/bin/python -m src.platform_app run --person glaucojunior
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true

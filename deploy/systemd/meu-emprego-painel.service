@@ -1,0 +1,20 @@
+[Unit]
+Description=Painel privado de vagas do Glauco
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=glaucojunior
+Group=glaucojunior
+WorkingDirectory=/home/glaucojunior/projetos/meu-emprego-novo
+EnvironmentFile=/home/glaucojunior/projetos/meu-emprego-novo/input/glaucojunior/platform.env
+ExecStart=/home/glaucojunior/projetos/meu-emprego-novo/.venv-platform/bin/uvicorn src.platform_app.web:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
