@@ -45,7 +45,7 @@ No `job_policy.json`, ajuste títulos, tecnologias, exclusões e `remote_only`. 
 - `remotive: false` deixa desligada a fonte internacional que trouxe muitos anúncios em inglês. Se ativá-la, a resposta é guardada por 6 horas para respeitar o limite recomendado; a fonte e o link direto aparecem no painel.
 - `brazil_only: true` exige Brasil, LATAM ou abrangência mundial informada no campo de localização. País incerto fica para revisão.
 - `require_portuguese: true` exige sinais de texto em português na descrição. É uma heurística, então pode deixar de priorizar um anúncio bilíngue; altere para `false` se quiser considerar vagas em inglês que aceitam pessoas no Brasil.
-- `max_age_days: 30` tira vagas datadas há mais de 30 dias do filtro **Aderentes**. A data de publicação é exibida quando a fonte a oferece; quando há somente data de atualização, o painel indica **Atualizada em**. Data ausente é explicitada e exige sua conferência.
+- `max_age_days: 30` tira vagas datadas há mais de 30 dias do filtro **Aderentes**. `require_known_date: true` envia anúncios sem data para **Todas**. A data de publicação é exibida quando a fonte a oferece; quando há somente data de atualização, o painel indica **Atualizada em**.
 - `greenhouse_boards` e `lever_sites` recebem os identificadores das páginas de carreiras das empresas que você escolher acompanhar. Exemplo: `["empresaexemplo"]`, após confirmar que a empresa usa esse identificador. São consultas públicas por empresa.
 - `arbeitnow` começa desligado porque concentra vagas europeias.
 - `gmail_query` começa vazio. Você pode ativar depois, por exemplo com `"label:Vagas newer_than:14d"`, após criar e alimentar essa etiqueta no Gmail e concluir o OAuth.
@@ -71,6 +71,7 @@ p = Path("input/glaucojunior/platform.json")
 data = json.loads(p.read_text(encoding="utf-8"))
 data.update(remotive=False, himalayas_queries=["DevOps", "SRE", "Infrastructure"],
             devops_brasil=True, brazil_only=True, require_portuguese=True,
+            require_known_date=True,
             max_age_days=30)
 p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 PY

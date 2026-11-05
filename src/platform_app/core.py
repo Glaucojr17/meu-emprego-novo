@@ -34,6 +34,7 @@ def config(person):
     data.setdefault("devops_brasil", True)
     data.setdefault("brazil_only", True)
     data.setdefault("require_portuguese", True)
+    data.setdefault("require_known_date", True)
     data.setdefault("max_age_days", 30)
     for key in ("greenhouse_boards", "lever_sites", "himalayas_queries"):
         if not isinstance(data.get(key, []), list):
@@ -43,7 +44,7 @@ def config(person):
         for term in data["himalayas_queries"]
     ):
         raise ValueError("Use até cinco termos de busca Himalayas (2 a 60 caracteres)")
-    for key in ("devops_brasil", "brazil_only", "require_portuguese"):
+    for key in ("devops_brasil", "brazil_only", "require_portuguese", "require_known_date"):
         if not isinstance(data[key], bool):
             raise ValueError(f"{key} deve ser true ou false")
     if (not isinstance(data["max_age_days"], int) or isinstance(data["max_age_days"], bool)
@@ -148,6 +149,7 @@ def evaluate(item, policy, settings):
             reasons.append("data fora da janela de busca")
     else:
         reasons.append("data não informada; confirme no anúncio")
+        freshness = not settings.get("require_known_date", True)
     if expires and date.fromisoformat(expires) < date.today():
         freshness = False
         reasons.append("prazo informado pela fonte encerrado")
@@ -156,7 +158,8 @@ def evaluate(item, policy, settings):
 
 
 def import_jobs(con, jobs, policy, settings=None):
-    settings = settings or {"require_portuguese": False, "brazil_only": True, "max_age_days": 30}
+    settings = settings or {"require_portuguese": False, "brazil_only": True,
+                            "require_known_date": False, "max_age_days": 30}
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     inserted = 0
     for item in jobs:
