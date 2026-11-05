@@ -17,7 +17,7 @@ from urllib.parse import parse_qs, urlparse
 
 
 URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
-FIELDS = ("source", "url", "title", "company", "location", "description")
+FIELDS = ("source", "url", "title", "company", "location", "description", "published_at")
 
 
 def canonical_url(value):
@@ -133,7 +133,8 @@ def load_policy(path):
 def score(job, preferences):
     title = job["title"].casefold()
     full = " ".join(str(job.get(field, "")) for field in FIELDS if field != "url").casefold()
-    matched_titles = [word for word in preferences["titles"] if word.casefold() in title]
+    matched_titles = [word for word in preferences["titles"] if re.search(
+        r"(?<!\w)" + re.escape(word.casefold()) + r"(?!\w)", title)]
     matched_skills = [word for word in preferences["skills"] if word.casefold() in full]
     excluded = [word for word in preferences["exclude"] if word.casefold() in full]
     remote = any(word in full for word in ("remoto", "remote", "home office", "100% remoto"))

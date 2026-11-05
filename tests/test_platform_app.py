@@ -1,7 +1,9 @@
 import json
 import os
+import sqlite3
 import tempfile
 import unittest
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -75,7 +77,9 @@ class PlatformTests(unittest.TestCase):
         private.mkdir(parents=True)
         (private / "platform.json").write_text(json.dumps({
             "person": "glaucojunior", "remotive": False, "arbeitnow": False,
-            "greenhouse_boards": [], "lever_sites": [], "gmail_query": "",
+            "greenhouse_boards": [], "lever_sites": [], "himalayas_queries": [],
+            "devops_brasil": False, "require_portuguese": False,
+            "gmail_query": "",
             "max_new_documents_per_run": 2}))
         (private / "job_policy.json").write_text(json.dumps(POLICY))
         (private / "vagas.csv").write_text(
@@ -103,13 +107,94 @@ class PlatformTests(unittest.TestCase):
         with patch.object(sources, "fetch_json", return_value={"jobs": [{
             "url": "https://remotive.com/remote-jobs/devops-1", "title": "DevOps",
             "company_name": "Exemplo", "candidate_required_location": "Worldwide",
-            "description": "<p>Terraform &amp; Linux</p>"}]}):
+            "description": "<p>Terraform &amp; Linux</p>",
+            "publication_date": "2026-11-02T12:00:00"}]}):
             base = self.root / "input" / "glaucojunior"
             base.mkdir(parents=True)
             jobs = sources.remotive(base)
             self.assertEqual(jobs[0]["description"], "Terraform & Linux")
             self.assertIn("Remoto", jobs[0]["location"])
+            self.assertEqual(jobs[0]["published_at"], "2026-11-02T12:00:00")
             self.assertEqual(len(sources.remotive(base)), 1)  # cache, sem nova requisição
+
+    def test_recent_brazilian_role_only_and_legacy_db_migration(self):
+        output = self.root / "outputs" / "glaucojunior" / "platform"
+        output.mkdir(parents=True)
+        old = sqlite3.connect(output / "jobs.sqlite3")
+        old.execute("""CREATE TABLE jobs (
+            id TEXT PRIMARY KEY, url TEXT NOT NULL UNIQUE, source TEXT NOT NULL,
+            title TEXT NOT NULL, company TEXT NOT NULL, location TEXT NOT NULL,
+            description TEXT NOT NULL, score INTEGER NOT NULL, eligible INTEGER NOT NULL,
+            reasons TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'nova',
+            first_seen TEXT NOT NULL, last_seen TEXT NOT NULL, generated_at TEXT,
+            generation_error TEXT NOT NULL DEFAULT '', note TEXT NOT NULL DEFAULT ''
+        )""")
+        old.commit()
+        old.close()
+        con = core.database(output)
+        self.assertIn("published_at", {r[1] for r in con.execute("PRAGMA table_info(jobs)")})
+        settings = {"brazil_only": True, "require_portuguese": True, "max_age_days": 30}
+        today = date.today()
+        jobs = [
+            sources.job("Teste", f"https://example.com/{label}", title, "Empresa",
+                        location, description, published_at=published)
+            for label, title, location, description, published in (
+                ("good", "Analista DevOps", "Remoto — Brasil",
+                 "Requisitos: Kubernetes. Experiência com Terraform.",
+                 today.isoformat()),
+                ("old", "Analista DevOps", "Remoto — Brasil",
+                 "Requisitos: Kubernetes. Experiência com Terraform.",
+                 (today - timedelta(days=61)).isoformat()),
+                ("english", "DevOps Engineer", "Remoto — Brasil",
+                 "Requirements: Kubernetes. Experience with Terraform.",
+                 today.isoformat()),
+                ("country", "DevOps Engineer", "Remoto — USA only",
+                 "Requisitos: Kubernetes. Experiência com Terraform.",
+                 today.isoformat()),
+                ("role", "Backend Developer", "Remoto — Brasil",
+                 "Requisitos: Kubernetes. Experiência com Terraform.",
+                 today.isoformat()),
+            )
+        ]
+        self.assertEqual(core.import_jobs(con, jobs, POLICY, settings), 5)
+        eligible = con.execute("SELECT title FROM jobs WHERE eligible=1").fetchall()
+        self.assertEqual([r[0] for r in eligible], ["Analista DevOps"])
+        con.execute("UPDATE jobs SET status='avaliar' WHERE url='https://example.com/good'")
+        con.commit()
+        core.recheck_existing(con, POLICY, settings)
+        self.assertEqual(con.execute(
+            "SELECT status, published_at FROM jobs WHERE url='https://example.com/good'").fetchone()[:],
+            ("avaliar", today.isoformat()))
+        con.close()
+
+    def test_himalayas_and_brazil_board_date_semantics(self):
+        now = int(datetime.now(timezone.utc).timestamp())
+        def fake_fetch(url, domain):
+            if domain == "himalayas.app":
+                self.assertIn("country=BR", url)
+                return {"jobs": [{
+                    "title": "DevOps Engineer", "companyName": "Exemplo",
+                    "applicationLink": "https://himalayas.app/companies/exemplo/jobs/devops",
+                    "description": "Requisitos e experiência em Kubernetes.",
+                    "locationRestrictions": [{"alpha2": "BR"}], "pubDate": now,
+                    "expiryDate": now + 86400 * 20
+                }]}
+            return [{
+                "title": "Analista DevOps", "html_url": "https://github.com/DevOps-Brasil/Vagas/issues/1",
+                "created_at": "2026-11-04T10:00:00Z",
+                "body": "### 🏢 Empresa\nExemplo\n### 📋 Descrição\nRequisitos e experiência",
+                "labels": [{"name": "Remoto"}]
+            }]
+        with patch.object(sources, "fetch_json", side_effect=fake_fetch):
+            base = self.root / "input" / "glaucojunior"
+            base.mkdir(parents=True)
+            himalayas = sources.himalayas(base, ["DevOps"])
+            board = sources.devops_brasil(base)
+        self.assertIsNone(himalayas[0]["published_at"])
+        self.assertEqual(core.normalize_date(himalayas[0]["updated_at"]),
+                         datetime.fromtimestamp(now, timezone.utc).date().isoformat())
+        self.assertEqual(board[0]["published_at"], "2026-11-04T10:00:00Z")
+        self.assertEqual(board[0]["company"], "Exemplo")
 
     def test_panel_requires_login_and_csrf(self):
         with patch.dict(os.environ, {"PLATFORM_PERSON": "glaucojunior",

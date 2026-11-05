@@ -4,7 +4,7 @@ import hashlib
 import json
 import re
 import sqlite3
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 from xml.sax.saxutils import escape
@@ -30,9 +30,25 @@ def config(person):
     data = json.loads((private / "platform.json").read_text(encoding="utf-8"))
     if data.get("person") != person:
         raise ValueError("platform.json deve indicar o mesmo perfil")
-    for key in ("greenhouse_boards", "lever_sites"):
+    data.setdefault("himalayas_queries", ["DevOps", "SRE", "Infrastructure"])
+    data.setdefault("devops_brasil", True)
+    data.setdefault("brazil_only", True)
+    data.setdefault("require_portuguese", True)
+    data.setdefault("max_age_days", 30)
+    for key in ("greenhouse_boards", "lever_sites", "himalayas_queries"):
         if not isinstance(data.get(key, []), list):
             raise ValueError(f"{key} deve ser uma lista")
+    if len(data["himalayas_queries"]) > 5 or any(
+        not isinstance(term, str) or not 2 <= len(term.strip()) <= 60
+        for term in data["himalayas_queries"]
+    ):
+        raise ValueError("Use até cinco termos de busca Himalayas (2 a 60 caracteres)")
+    for key in ("devops_brasil", "brazil_only", "require_portuguese"):
+        if not isinstance(data[key], bool):
+            raise ValueError(f"{key} deve ser true ou false")
+    if (not isinstance(data["max_age_days"], int) or isinstance(data["max_age_days"], bool)
+            or not 1 <= data["max_age_days"] <= 90):
+        raise ValueError("max_age_days deve estar entre 1 e 90")
     maximum = data.get("max_new_documents_per_run", 10)
     if not isinstance(maximum, int) or isinstance(maximum, bool) or not 0 <= maximum <= 30:
         raise ValueError("max_new_documents_per_run deve estar entre 0 e 30")
@@ -53,8 +69,14 @@ def database(output):
         description TEXT NOT NULL, score INTEGER NOT NULL, eligible INTEGER NOT NULL,
         reasons TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'nova',
         first_seen TEXT NOT NULL, last_seen TEXT NOT NULL, generated_at TEXT,
-        generation_error TEXT NOT NULL DEFAULT '', note TEXT NOT NULL DEFAULT ''
+        generation_error TEXT NOT NULL DEFAULT '', note TEXT NOT NULL DEFAULT '',
+        published_at TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL DEFAULT '',
+        expires_at TEXT NOT NULL DEFAULT ''
     )""")
+    columns = {row[1] for row in con.execute("PRAGMA table_info(jobs)")}
+    for field in ("published_at", "updated_at", "expires_at"):
+        if field not in columns:
+            con.execute(f"ALTER TABLE jobs ADD COLUMN {field} TEXT NOT NULL DEFAULT ''")
     con.commit()
     return con
 
@@ -66,15 +88,75 @@ def normalize_url(url):
     return parsed._replace(query="", fragment="").geturl().rstrip("/")
 
 
-def geography_ok(location):
+def geography_ok(location, brazil_only=True):
     text = location.casefold()
-    positive = ("brasil", "brazil", "latam", "latin america", "worldwide", "global", "anywhere")
-    if any(x in text for x in positive):
+    if re.search(r"(?:excluding|except|exceto|não aceita|nao aceita)\s+(?:brazil|brasil)", text):
+        return False
+    positive = r"\b(?:brasil|brazil|latam|latin america|worldwide|global|anywhere)\b"
+    if re.search(positive, text):
         return True
-    return not bool(re.search(r"\b(usa?|united states|canada|europe|european union|uk|united kingdom|australia)\b", text))
+    return not brazil_only
 
 
-def import_jobs(con, jobs, policy):
+def normalize_date(value):
+    if value is None or value == "":
+        return ""
+    try:
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            # Algumas APIs usam milissegundos; Himalayas usa segundos Unix.
+            return datetime.fromtimestamp(value / (1000 if value > 10**11 else 1),
+                                          timezone.utc).date().isoformat()
+        return date.fromisoformat(str(value)[:10]).isoformat()
+    except (ValueError, OverflowError, OSError):
+        return ""
+
+
+def portuguese_evidence(item):
+    """Sinal conservador, configurável: evita apresentar anúncios ingleses como prioritários."""
+    text = (item["title"] + " " + item["description"]).casefold()
+    markers = (r"\brequisitos?\b", r"\bresponsabilidades\b", r"\bexperi[eê]ncia\b",
+               r"\bbenef[ií]cios\b", r"\batua[cç][aã]o\b", r"\bconhecimentos\b",
+               r"\binfraestrutura\b", r"\bdesenvolvimento\b", r"\bequipe\b",
+               r"\bvagas?\b", r"\bremot[oa]\b", r"\bcontrata[cç][aã]o\b")
+    return sum(bool(re.search(marker, text)) for marker in markers) >= 2
+
+
+def evaluate(item, policy, settings):
+    match = score(item, policy)
+    published = normalize_date(item.get("published_at"))
+    updated = normalize_date(item.get("updated_at"))
+    expires = normalize_date(item.get("expires_at"))
+    reasons = match["titles"] + match["skills"]
+    if not match["titles"]:
+        reasons.append("cargo fora do foco")
+    if match["excluded"]:
+        reasons.append("modalidade excluída: " + ", ".join(match["excluded"]))
+    if not geography_ok(item["location"], settings.get("brazil_only", True)):
+        reasons.append("não confirma candidatura remota a partir do Brasil")
+        allowed_country = False
+    else:
+        allowed_country = True
+    pt_ok = not settings.get("require_portuguese", True) or portuguese_evidence(item)
+    if not pt_ok:
+        reasons.append("descrição em português não confirmada")
+    reference = published or updated
+    freshness = True
+    if reference:
+        age = date.today() - date.fromisoformat(reference)
+        freshness = timedelta(days=-1) <= age <= timedelta(days=settings.get("max_age_days", 30))
+        if not freshness:
+            reasons.append("data fora da janela de busca")
+    else:
+        reasons.append("data não informada; confirme no anúncio")
+    if expires and date.fromisoformat(expires) < date.today():
+        freshness = False
+        reasons.append("prazo informado pela fonte encerrado")
+    return (match, int(match["eligible"] and allowed_country and pt_ok and freshness),
+            ", ".join(reasons), published, updated, expires)
+
+
+def import_jobs(con, jobs, policy, settings=None):
+    settings = settings or {"require_portuguese": False, "brazil_only": True, "max_age_days": 30}
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     inserted = 0
     for item in jobs:
@@ -84,26 +166,36 @@ def import_jobs(con, jobs, policy):
             continue
         if not item.get("title"):
             continue
-        match = score(item, policy)
+        match, eligible, reason, published, updated, expires = evaluate(item, policy, settings)
         identity = hashlib.sha256(url.encode()).hexdigest()[:20]
-        country_ok = geography_ok(item["location"])
-        reason = ", ".join(match["titles"] + match["skills"])
-        if not country_ok:
-            reason += "; restrição geográfica a confirmar"
         exists = con.execute("SELECT id FROM jobs WHERE id=?", (identity,)).fetchone()
         con.execute("""INSERT INTO jobs
-            (id,url,source,title,company,location,description,score,eligible,reasons,first_seen,last_seen)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+            (id,url,source,title,company,location,description,score,eligible,reasons,
+             first_seen,last_seen,published_at,updated_at,expires_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ON CONFLICT(id) DO UPDATE SET source=excluded.source,title=excluded.title,
                 company=excluded.company,location=excluded.location,
                 description=excluded.description,score=excluded.score,
-                eligible=excluded.eligible,reasons=excluded.reasons,last_seen=excluded.last_seen""",
+                eligible=excluded.eligible,reasons=excluded.reasons,last_seen=excluded.last_seen,
+                published_at=CASE WHEN excluded.published_at!='' THEN excluded.published_at ELSE jobs.published_at END,
+                updated_at=CASE WHEN excluded.updated_at!='' THEN excluded.updated_at ELSE jobs.updated_at END,
+                expires_at=CASE WHEN excluded.expires_at!='' THEN excluded.expires_at ELSE jobs.expires_at END""",
             (identity, url, item["source"], item["title"], item["company"],
              item["location"], item["description"], match["score"],
-             int(match["eligible"] and country_ok), reason, now, now))
+             eligible, reason, now, now, published, updated, expires))
         inserted += not bool(exists)
     con.commit()
     return inserted
+
+
+def recheck_existing(con, policy, settings):
+    """Reaplica critérios a vagas antigas mesmo se a fonte foi desligada ou o prazo passou."""
+    for row in con.execute("SELECT * FROM jobs").fetchall():
+        item = dict(row)
+        match, eligible, reasons, _, _, _ = evaluate(item, policy, settings)
+        con.execute("UPDATE jobs SET score=?, eligible=?, reasons=? WHERE id=?",
+                    (match["score"], eligible, reasons, row["id"]))
+    con.commit()
 
 
 def relevance(text, terms):
@@ -206,6 +298,10 @@ def collect(private, settings):
     providers = []
     if settings.get("remotive"):
         providers.append(("Remotive", lambda: sources.remotive(private)))
+    if settings["himalayas_queries"]:
+        providers.append(("Himalayas", lambda: sources.himalayas(private, settings["himalayas_queries"])))
+    if settings["devops_brasil"]:
+        providers.append(("DevOps Brasil", lambda: sources.devops_brasil(private)))
     if settings.get("arbeitnow"):
         providers.append(("Arbeitnow", sources.arbeitnow))
     for name in settings.get("greenhouse_boards", []):
@@ -238,9 +334,11 @@ def run(person):
 def _run_unlocked(person, private, output, settings, policy):
     con = database(output)
     jobs, errors = collect(private, settings)
-    added = import_jobs(con, jobs, policy)
+    added = import_jobs(con, jobs, policy, settings)
+    recheck_existing(con, policy, settings)
     candidates = con.execute("""SELECT * FROM jobs WHERE eligible=1 AND generated_at IS NULL
-        AND status != 'descartada' ORDER BY score DESC, first_seen DESC LIMIT ?""",
+        AND status != 'descartada' ORDER BY COALESCE(NULLIF(published_at,''), NULLIF(updated_at,''), first_seen) DESC,
+        score DESC LIMIT ?""",
         (settings["max_new_documents_per_run"],)).fetchall()
     generated = 0
     for row in candidates:
@@ -252,7 +350,9 @@ def _run_unlocked(person, private, output, settings, policy):
             errors.append(f"Documento {row['id']}: {message}")
             con.execute("UPDATE jobs SET generation_error=? WHERE id=?", (message, row["id"]))
             con.commit()
-    result = {"collected": len(jobs), "new": added, "generated": generated, "errors": errors,
+    relevant = con.execute("SELECT COUNT(*) FROM jobs WHERE eligible=1").fetchone()[0]
+    result = {"collected": len(jobs), "new": added, "eligible": relevant,
+              "generated": generated, "errors": errors,
               "completed_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
     (output / "last-run.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     con.close()

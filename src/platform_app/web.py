@@ -69,6 +69,18 @@ def e(value):
     return html.escape(str(value or ""), quote=True)
 
 
+def date_label(row):
+    value = row["published_at"]
+    label = "Publicada em"
+    if not value:
+        value = row["updated_at"]
+        label = "Atualizada em"
+    if not value:
+        return "Data de publicação não informada"
+    year, month, day = value.split("-")
+    return f"{label} {day}/{month}/{year}"
+
+
 def shell(title, body):
     return HTMLResponse(f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -91,10 +103,12 @@ def get_row(identity):
 
 
 @app.get("/", dependencies=[Depends(guard)])
-def index(q: str = "", filter: str = "todas"):
+def index(q: str = "", filter: str = "compatíveis"):
     _, output = paths(person())
     con = database(output)
-    rows = con.execute("SELECT * FROM jobs ORDER BY eligible DESC, score DESC, first_seen DESC LIMIT 800").fetchall()
+    rows = con.execute("""SELECT * FROM jobs ORDER BY eligible DESC,
+        COALESCE(NULLIF(published_at,''), NULLIF(updated_at,''), first_seen) DESC,
+        score DESC LIMIT 800""").fetchall()
     con.close()
     q = q.strip()[:80].casefold()
     rows = [r for r in rows if (not q or q in (r["title"] + " " + r["company"] + " " + r["location"]).casefold())
@@ -105,7 +119,8 @@ def index(q: str = "", filter: str = "todas"):
         import json
         info = json.loads(last.read_text(encoding="utf-8"))
         summary = (f"Última coleta: {e(info['completed_at'])} · {info['collected']} recebidas · "
-                   f"{info['new']} novas · {info['generated']} documentos gerados")
+                   f"{info['new']} novas · {info.get('eligible', '—')} aderentes no banco · "
+                   f"{info['generated']} documentos gerados")
         if info.get("errors"):
             summary += f" · {len(info['errors'])} pendência(s); confira o log do comando run."
     cards = []
@@ -117,17 +132,19 @@ def index(q: str = "", filter: str = "todas"):
 <span class="muted">{e(r['score'])} pontos</span></div>
 <h2><a href="/jobs/{r['id']}">{e(r['title'])}</a></h2>
 <p>{e(r['company'] or 'Empresa a confirmar')} · {e(r['location'] or 'Local a confirmar')}</p>
-<p class="muted">{e(r['source'])} · {e(r['status'])}<br>{e(doc)}</p>
+<p class="muted">{e(r['source'])} · {e(r['status'])}<br>{e(date_label(r))}<br>{e(doc)}</p>
 <div class="links"><a href="/jobs/{r['id']}">Ver detalhes</a>
 <a href="{e(r['url'])}" target="_blank" rel="noopener noreferrer">Abrir vaga ↗</a></div></article>""")
     form_run = f'<form method="post" action="/run" class="inline"><input type="hidden" name="csrf" value="{token()}"><button type="submit">Buscar vagas agora</button></form>'
     toolbar = f"""<div class="toolbar">{form_run}
 <form method="get" action="/"><input name="q" placeholder="Cargo, empresa ou local" value="{e(q)}">
-<select name="filter"><option value="todas">Todas</option><option value="compatíveis">Aderentes</option>
-<option value="avaliar">Para avaliar</option><option value="candidatada">Candidatadas</option>
-<option value="descartada">Descartadas</option></select><button>Filtrar</button></form></div>"""
+<select name="filter">{"".join(f'<option value="{e(value)}" {"selected" if filter == value else ""}>{e(label)}</option>' for value, label in (
+    ("compatíveis", "Aderentes"), ("todas", "Todas"), ("avaliar", "Para avaliar"),
+    ("candidatada", "Candidatadas"), ("descartada", "Descartadas")))}</select>
+<button>Filtrar</button></form></div>"""
     return shell("Vagas", f'<p class="muted">{summary}</p>{toolbar}<p>{len(rows)} vaga(s) nesta visualização</p>'
-                 f'<section class="grid">{"".join(cards) if cards else "<p>Nenhuma vaga encontrada neste filtro.</p>"}</section>')
+                 '<p class="muted">Aderência automática é uma triagem. Confira prazo, modalidade e requisitos no anúncio original.</p>'
+                 f'<section class="grid">{"".join(cards) if cards else "<p>Nenhuma vaga encontrada neste filtro. Use “Todas” para revisar os demais anúncios.</p>"}</section>')
 
 
 @app.get("/jobs/{identity}", dependencies=[Depends(guard)])
@@ -147,6 +164,7 @@ def detail(identity: str):
     return shell(r["title"], f"""<p><a href="/">← Voltar</a></p><div class="panel">
 <span class="pill">{e(r['source'])}</span><h1>{e(r['title'])}</h1>
 <p>{e(r['company'])} · {e(r['location'])}</p>
+<p class="muted">{e(date_label(r))} · Primeiro registro neste painel: {e(r['first_seen'][:10])}</p>
 <p><a href="{e(r['url'])}" target="_blank" rel="noopener noreferrer">Abrir vaga original ↗</a></p>
 <p class="muted">Pontuação: {r['score']} · Requisitos encontrados: {e(r['reasons']) or 'insuficientes'}</p>
 <div class="links">{files}</div><p class="error">{e(r['generation_error'])}</p>

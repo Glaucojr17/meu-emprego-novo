@@ -18,10 +18,12 @@
 ### Painel privado e coleta programada
 
 O [guia de produção no homelab](docs/painel-producao-homelab.md) instala uma segunda interface,
-independente do CrewAI: consulta Remotive e páginas públicas Greenhouse/Lever,
+independente do CrewAI: consulta Himalayas com filtro Brasil e o quadro DevOps Brasil,
+com Remotive, Greenhouse e Lever como fontes opcionais,
 lê alertas locais ou da sua própria caixa Gmail via OAuth, guarda vagas em SQLite e
 prepara currículo PDF e roteiro por vaga com base no `resume.json` validado.
-Há filtros, acompanhamento manual e execução diária por systemd. O painel fica
+Há filtro por cargo, país, idioma e recência, com data da publicação ou da atualização
+quando a fonte fornece uma delas, acompanhamento manual e execução diária por systemd. O painel fica
 acessível somente por túnel SSH; nenhuma candidatura é enviada pela ferramenta.
 
 Aqui você encontra duas coisas:
