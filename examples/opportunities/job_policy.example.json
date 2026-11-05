@@ -1,6 +1,6 @@
 {
-  "titles": ["DevOps", "SRE", "Infraestrutura", "Platform Engineer", "DevSecOps", "Cloud Engineer", "Node.js"],
-  "skills": ["Kubernetes", "EKS", "Terraform", "Linux", "Docker", "Azure DevOps", "CI/CD", "Ansible", "Grafana", "Prometheus"],
+  "titles": ["DevOps", "DevSecOps", "SRE", "Site Reliability", "Infrastructure", "Infraestrutura", "Platform Engineer", "Cloud Engineer", "Cloud Operations", "Sysadmin", "Administrador de Sistemas", "Analista de Redes"],
+  "skills": ["Kubernetes", "EKS", "Terraform", "Linux", "Docker", "Azure DevOps", "CI/CD", "Ansible", "Grafana", "Prometheus", "Zabbix", "AWS", "Azure", "SAN", "Backup"],
   "exclude": ["presencial", "híbrido", "hibrido"],
   "remote_only": true
 }

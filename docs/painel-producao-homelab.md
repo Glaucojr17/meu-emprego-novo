@@ -40,7 +40,12 @@ nano input/glaucojunior/platform.json
 
 No `job_policy.json`, ajuste títulos, tecnologias, exclusões e `remote_only`. No `platform.json`:
 
-- `remotive: true` ativa uma consulta pública de vagas remotas; a resposta é guardada por 6 horas para respeitar o limite recomendado pela fonte. A Remotive apresenta vagas com atraso e exige menção da fonte e link direto.
+- `himalayas_queries` consulta a API pública da Himalayas com filtro `country=BR` e até cinco termos. O exemplo usa DevOps, SRE e Infrastructure. Há cache de 24 horas. O link de candidatura e o crédito visível usam a própria Himalayas.
+- `devops_brasil: true` consulta issues abertas do quadro comunitário DevOps Brasil (cache de 6 horas). A data da issue é a data do anúncio no quadro; confirme no link se a seleção continua aberta.
+- `remotive: false` deixa desligada a fonte internacional que trouxe muitos anúncios em inglês. Se ativá-la, a resposta é guardada por 6 horas para respeitar o limite recomendado; a fonte e o link direto aparecem no painel.
+- `brazil_only: true` exige Brasil, LATAM ou abrangência mundial informada no campo de localização. País incerto fica para revisão.
+- `require_portuguese: true` exige sinais de texto em português na descrição. É uma heurística, então pode deixar de priorizar um anúncio bilíngue; altere para `false` se quiser considerar vagas em inglês que aceitam pessoas no Brasil.
+- `max_age_days: 30` tira vagas datadas há mais de 30 dias do filtro **Aderentes**. A data de publicação é exibida quando a fonte a oferece; quando há somente data de atualização, o painel indica **Atualizada em**. Data ausente é explicitada e exige sua conferência.
 - `greenhouse_boards` e `lever_sites` recebem os identificadores das páginas de carreiras das empresas que você escolher acompanhar. Exemplo: `["empresaexemplo"]`, após confirmar que a empresa usa esse identificador. São consultas públicas por empresa.
 - `arbeitnow` começa desligado porque concentra vagas europeias.
 - `gmail_query` começa vazio. Você pode ativar depois, por exemplo com `"label:Vagas newer_than:14d"`, após criar e alimentar essa etiqueta no Gmail e concluir o OAuth.
@@ -49,6 +54,35 @@ No `job_policy.json`, ajuste títulos, tecnologias, exclusões e `remote_only`. 
 O PDF requer seu **currículo mestre validado** em `data/glaucojunior/resume.json`. Ele segue a estrutura de `examples/dev_procurando/resume.json`, mas **não copie dados fictícios como se fossem seus**. Se já preparou o arquivo com a ferramenta original, confira nome, empresas, datas, experiências e tecnologias. Se ainda não preparou, siga a seção 5 do [guia inicial](devops-ci-setup.md) para extrair do seu currículo e revisar o JSON. O painel pode coletar vagas sem esse arquivo, mas exibirá a pendência e não criará documentos.
 
 Também aceita seus próprios alertas `.eml` em `input/glaucojunior/job_alerts/` e links diretos em `input/glaucojunior/vagas.csv`, conforme [a triagem anterior](opportunities.md). Não usa bots em LinkedIn ou Gupy.
+O CSV pode incluir uma coluna opcional `published_at` em formato `AAAA-MM-DD`, se você confirmou a data no anúncio. Não preencha com a data do e-mail.
+
+### Atualizar uma instalação já em uso
+
+`git pull --ff-only` não altera seus arquivos privados em `input/` nem o banco. A migração do SQLite preserva status e anotações. Para aplicar o exemplo refinado ao perfil que antes usava Remotive, guarde as preferências atuais e execute:
+
+```bash
+cd ~/projetos/meu-emprego-novo
+cp -p input/glaucojunior/platform.json input/glaucojunior/platform.json.pre-filtro-br
+cp -p input/glaucojunior/job_policy.json input/glaucojunior/job_policy.json.pre-filtro-br
+python3 - <<'PY'
+import json
+from pathlib import Path
+p = Path("input/glaucojunior/platform.json")
+data = json.loads(p.read_text(encoding="utf-8"))
+data.update(remotive=False, himalayas_queries=["DevOps", "SRE", "Infrastructure"],
+            devops_brasil=True, brazil_only=True, require_portuguese=True,
+            max_age_days=30)
+p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+PY
+cp examples/opportunities/job_policy.example.json input/glaucojunior/job_policy.json
+chmod 600 input/glaucojunior/platform.json input/glaucojunior/job_policy.json
+python3 -m json.tool input/glaucojunior/platform.json >/dev/null
+python3 -m json.tool input/glaucojunior/job_policy.json >/dev/null
+.venv-platform/bin/python -m src.platform_app run --person glaucojunior
+sudo systemctl restart meu-emprego-painel.service
+```
+
+O exemplo da política foca DevOps, SRE e infraestrutura; se você tinha termos próprios, reaplique-os após comparar com o backup. A tela abre em **Aderentes**; selecione **Todas** para auditar anúncios descartados. Se não houver currículo mestre, mantenha `max_new_documents_per_run: 0` como já configurado. Vagas antigas continuam registradas, mas deixam de aparecer como aderentes quando excedem a janela configurada.
 
 ## 3. Executar uma coleta manual
 
@@ -58,7 +92,7 @@ cd ~/projetos/meu-emprego-novo
 cat outputs/glaucojunior/platform/last-run.json
 ```
 
-O comando informa total recebido, novas vagas, PDFs gerados e erros por fonte. Uma fonte indisponível não apaga as demais vagas. Se o currículo mestre ainda não existir, aparecerá `FileNotFoundError` por documento; prepare o arquivo e execute novamente. Os arquivos ficam em `outputs/glaucojunior/platform/documents/<id>/`, e o banco em `outputs/glaucojunior/platform/jobs.sqlite3`.
+O comando informa total recebido, novas vagas, quantidade aderente, PDFs gerados e erros por fonte. Uma fonte indisponível não apaga as demais vagas. Se o currículo mestre ainda não existir, mantenha `max_new_documents_per_run: 0`; do contrário aparecerá `FileNotFoundError` por documento. Os arquivos ficam em `outputs/glaucojunior/platform/documents/<id>/`, e o banco em `outputs/glaucojunior/platform/jobs.sqlite3`.
 
 A adaptação gratuita seleciona e prioriza experiências e habilidades **já existentes no JSON mestre**, sem inventar cargos, resultados ou tecnologias. O resumo acrescenta somente termos com evidência no currículo; o roteiro traz exemplos existentes e lacunas para você confirmar. A qualidade depende do JSON mestre. Leia o PDF antes de enviar.
 

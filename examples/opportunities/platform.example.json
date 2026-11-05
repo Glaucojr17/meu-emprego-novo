@@ -1,6 +1,11 @@
 {
   "person": "glaucojunior",
-  "remotive": true,
+  "remotive": false,
+  "himalayas_queries": ["DevOps", "SRE", "Infrastructure"],
+  "devops_brasil": true,
+  "brazil_only": true,
+  "require_portuguese": true,
+  "max_age_days": 30,
   "arbeitnow": false,
   "greenhouse_boards": [],
   "lever_sites": [],
