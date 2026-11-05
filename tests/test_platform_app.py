@@ -79,6 +79,7 @@ class PlatformTests(unittest.TestCase):
             "person": "glaucojunior", "remotive": False, "arbeitnow": False,
             "greenhouse_boards": [], "lever_sites": [], "himalayas_queries": [],
             "devops_brasil": False, "require_portuguese": False,
+            "require_known_date": False,
             "gmail_query": "",
             "max_new_documents_per_run": 2}))
         (private / "job_policy.json").write_text(json.dumps(POLICY))
@@ -157,6 +158,12 @@ class PlatformTests(unittest.TestCase):
             )
         ]
         self.assertEqual(core.import_jobs(con, jobs, POLICY, settings), 5)
+        no_date = sources.job("Alerta", "https://example.com/unknown",
+                              "DevOps", "Empresa", "Remoto — Brasil",
+                              "Requisitos: Kubernetes. Experiência com Terraform.")
+        core.import_jobs(con, [no_date], POLICY, settings)
+        self.assertEqual(con.execute(
+            "SELECT eligible FROM jobs WHERE url='https://example.com/unknown'").fetchone()[0], 0)
         eligible = con.execute("SELECT title FROM jobs WHERE eligible=1").fetchall()
         self.assertEqual([r[0] for r in eligible], ["Analista DevOps"])
         con.execute("UPDATE jobs SET status='avaliar' WHERE url='https://example.com/good'")

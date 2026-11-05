@@ -5,6 +5,7 @@
   "devops_brasil": true,
   "brazil_only": true,
   "require_portuguese": true,
+  "require_known_date": true,
   "max_age_days": 30,
   "arbeitnow": false,
   "greenhouse_boards": [],
